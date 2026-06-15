@@ -5,7 +5,6 @@ import heroImg from './assets/hero.png'
 import './App.css'
 import Header from './Components/Header.jsx'
 import axios from 'axios'
-import { useSelector, useDispatch } from 'react-redux'
 
 const BASE_URL = "http://localhost:3005"
 
