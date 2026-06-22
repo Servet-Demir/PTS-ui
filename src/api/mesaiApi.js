@@ -5,11 +5,7 @@ export const getAllMesailer = () => {
 };
 
 export const getMesaiByPersonelAndDonem = (personelId, donem) => {
-    return api.get(`/rest/api/mesai/personel/${personelId}`, {
-        params: {
-            donem: donem,
-        },
-    });
+    return api.get(`/rest/api/mesai/personel/${personelId}?donem=${donem}`);
 };
 
 export const saveMesai = (mesai) => {
