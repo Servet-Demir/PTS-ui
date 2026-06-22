@@ -5,19 +5,11 @@ export const getAllMaaslar = () => {
 };
 
 export const hesaplaMaas = (personelId, donem) => {
-    return api.post(`/rest/api/maas/hesapla/${personelId}`, null, {
-        params: {
-            donem: donem,
-        },
-    });
+    return api.post(`/rest/api/maas/hesapla/${personelId}?donem=${donem}`);
 };
 
 export const getMaasByDonem = (donem) => {
-    return api.get("/rest/api/maas/donem", {
-        params: {
-            donem: donem,
-        },
-    });
+    return api.get(`/rest/api/maas/donem?donem=${donem}`);
 };
 
 export const deleteMaas = (id) => {
