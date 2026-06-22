@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import { getAllBirimler } from "../api/birimApi";
-import { getAllPersoneller, savePersonel, deletePersonel } from "../api/personelApi";
+import { getAllPersoneller, savePersonel, deletePersonel, updatePersonel } from "../api/personelApi";
 
 function PersonelPage() {
     const [personeller, setPersoneller] = useState([]);
     const [birimler, setBirimler] = useState([]);
-
     const [ad, setAd] = useState("");
     const [soyad, setSoyad] = useState("");
     const [email, setEmail] = useState("");
     const [yonetici, setYonetici] = useState(false);
     const [birimId, setBirimId] = useState("");
+    const [guncellenecekPersonelId, setGuncellenecekPersonelId] = useState(null);
+
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
-        setPersoneller(response.data);
+
+        const siraliPersoneller = [...response.data].sort(
+            (a, b) => a.personelId - b.personelId
+        );
+
+        setPersoneller(siraliPersoneller);
     };
 
     const fetchBirimler = async () => {
@@ -43,6 +49,48 @@ function PersonelPage() {
     const handleDelete = async (id) => {
         await deletePersonel(id);
         fetchPersoneller();
+    };
+
+    const handleUpdate = async () => {
+        if (guncellenecekPersonelId === null) {
+            alert("Lütfen güncellenecek personeli seçiniz.");
+            return;
+        }
+
+        if (!birimId) {
+            alert("Lütfen birim seçiniz.");
+            return;
+        }
+
+        const guncelPersonel = {
+            ad: ad,
+            soyad: soyad,
+            email: email,
+            yonetici: yonetici,
+            birim: {
+                birimId: Number(birimId),
+            },
+        };
+
+        await updatePersonel(guncellenecekPersonelId, guncelPersonel);
+
+        setAd("");
+        setSoyad("");
+        setEmail("");
+        setYonetici(false);
+        setBirimId("");
+        setGuncellenecekPersonelId(null);
+
+        fetchPersoneller();
+    };
+
+    const handleEditClick = (personel) => {
+        setGuncellenecekPersonelId(personel.personelId);
+        setAd(personel.ad);
+        setSoyad(personel.soyad);
+        setEmail(personel.email);
+        setYonetici(personel.yonetici);
+        setBirimId(personel.birim.birimId);
     };
 
     useEffect(() => {
@@ -93,19 +141,24 @@ function PersonelPage() {
                 </label>
 
                 <button onClick={handleSave}>Personel Ekle</button>
+                <button onClick={handleUpdate}>Personel Güncelle</button>
             </div>
 
             <h3>Personel Listesi</h3>
 
             {personeller.map((personel) => (
                 <div key={personel.personelId}>
-                    <span>
+                    <p>
                         {personel.personelId} - {personel.ad} {personel.soyad} - {personel.email} -{" "}
                         {personel.birim.ad} - {personel.yonetici ? "Yönetici" : "Personel"}
-                    </span>
+                    </p>
 
                     <button onClick={() => handleDelete(personel.personelId)}>
                         Sil
+                    </button>
+
+                    <button onClick={() => handleEditClick(personel)}>
+                        Düzenle
                     </button>
                 </div>
             ))}
