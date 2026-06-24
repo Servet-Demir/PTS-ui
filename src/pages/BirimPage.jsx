@@ -9,7 +9,9 @@ import {
 function BirimPage() {
     const [birimler, setBirimler] = useState([]);
     const [ad, setAd] = useState("");
-    const [guncellenecekBirimId, setGuncellenecekBirimId] = useState(null);
+
+    const [duzenlenenBirimId, setDuzenlenenBirimId] = useState(null);
+    const [duzenlenenAd, setDuzenlenenAd] = useState("");
 
     const fetchBirimler = async () => {
         const response = await getAllBirimler();
@@ -32,26 +34,26 @@ function BirimPage() {
         fetchBirimler();
     };
 
-    const handleUpdate = async () => {
-        if (guncellenecekBirimId === null) {
-            alert("Lütfen güncellenecek birimi seçiniz.");
-            return;
-        }
-
-        const guncelBirim = {
-            ad: ad,
-        };
-
-        await updateBirim(guncellenecekBirimId, guncelBirim);
-
-        setAd("");
-        setGuncellenecekBirimId(null);
-        fetchBirimler();
+    const handleEditClick = (birim) => {
+        setDuzenlenenBirimId(birim.birimId);
+        setDuzenlenenAd(birim.ad);
     };
 
-    const handleEditClick = (birim) => {
-        setGuncellenecekBirimId(birim.birimId);
-        setAd(birim.ad);
+    const handleCancelEdit = () => {
+        setDuzenlenenBirimId(null);
+        setDuzenlenenAd("");
+    };
+
+    const handleUpdate = async (id) => {
+        const guncelBirim = {
+            ad: duzenlenenAd,
+        };
+
+        await updateBirim(id, guncelBirim);
+
+        setDuzenlenenBirimId(null);
+        setDuzenlenenAd("");
+        fetchBirimler();
     };
 
     const handleDelete = async (id) => {
@@ -65,9 +67,16 @@ function BirimPage() {
 
     return (
         <div>
-            <h2>Birim Sayfası</h2>
+            <div className="page-header">
+                <h2>Birim Yönetimi</h2>
+                <p className="page-subtitle">
+                    Şirket içerisindeki birimleri buradan ekleyebilir, düzenleyebilir ve silebilirsin.
+                </p>
+            </div>
 
             <div className="form-section">
+                <h3 className="section-title">Yeni Birim Ekle</h3>
+
                 <div className="form-row">
                     <input
                         type="text"
@@ -79,37 +88,62 @@ function BirimPage() {
                     <button onClick={handleSave}>
                         Birim Ekle
                     </button>
-
-                    <button onClick={handleUpdate}>
-                        Birim Güncelle
-                    </button>
                 </div>
             </div>
 
-            <hr />
-
             <h3>Birim Listesi</h3>
 
-            {birimler.map((birim) => (
-                <div className="list-item" key={birim.birimId}>
-                    <p>
-                        {birim.birimId} - {birim.ad}
-                    </p>
-
-                    <div className="list-actions">
-                        <button onClick={() => handleEditClick(birim)}>
-                            Düzenle
-                        </button>
-
-                        <button
-                            className="delete-button"
-                            onClick={() => handleDelete(birim.birimId)}
-                        >
-                            Sil
-                        </button>
-                    </div>
+            {birimler.length === 0 ? (
+                <div className="empty-state">
+                    Henüz birim kaydı bulunmuyor.
                 </div>
-            ))}
+            ) : (
+                birimler.map((birim) => (
+                    <div className="list-card" key={birim.birimId}>
+                        <div className="list-item">
+                            <div className="list-content">
+                                <strong>{birim.ad}</strong>
+                                <br />
+                                <span>Birim ID: {birim.birimId}</span>
+                            </div>
+
+                            <div className="list-actions">
+                                <button onClick={() => handleEditClick(birim)}>
+                                    Düzenle
+                                </button>
+
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(birim.birimId)}
+                                >
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+
+                        {duzenlenenBirimId === birim.birimId && (
+                            <div className="edit-panel">
+                                <input
+                                    type="text"
+                                    value={duzenlenenAd}
+                                    onChange={(e) => setDuzenlenenAd(e.target.value)}
+                                />
+
+                                <button onClick={() => handleUpdate(birim.birimId)}>
+                                    Güncelle
+                                </button>
+
+                                <button
+                                    className="secondary-button"
+                                    onClick={handleCancelEdit}
+                                >
+                                    Vazgeç
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ))
+            )}
         </div>
     );
 }
