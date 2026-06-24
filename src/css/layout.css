@@ -8,21 +8,6 @@
     box-shadow: var(--shadow-md);
 }
 
-.page-container h2 {
-    margin-top: 0;
-    margin-bottom: 24px;
-    font-size: 26px;
-    font-weight: 800;
-}
-
-.page-container h3 {
-    margin-top: 24px;
-    margin-bottom: 14px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #1f2937;
-}
-
 .page-header {
     margin-bottom: 26px;
 }

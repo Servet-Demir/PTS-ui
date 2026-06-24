@@ -1,9 +1,20 @@
 .form-section {
     margin-bottom: 24px;
-    padding: 18px;
+    padding: 20px 24px;
     background-color: #f9fafb;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
+}
+
+.form-section:hover {
+    border-color: #dbeafe;
+}
+
+.section-title {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
 }
 
 .form-row {
@@ -14,14 +25,10 @@
     margin-bottom: 0;
 }
 
-.form-section h3 {
-    margin-top: 0;
-    margin-bottom: 16px;
-}
-
 input,
 select {
-    height: 40px;
+    height: 42px;
+    min-width: 180px;
     padding: 9px 12px;
     border: 1px solid #d1d5db;
     border-radius: var(--radius-sm);
@@ -43,14 +50,16 @@ input::placeholder {
 }
 
 .checkbox-label {
+    height: 42px;
     display: flex;
     align-items: center;
     gap: 8px;
     white-space: nowrap;
     color: #374151;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .checkbox-label input {
     height: auto;
+    min-width: auto;
 }

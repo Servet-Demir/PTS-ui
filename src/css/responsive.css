@@ -45,3 +45,15 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar-links {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

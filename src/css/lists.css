@@ -2,15 +2,20 @@
     margin-bottom: 12px;
 }
 
+.list-card {
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
 .list-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
     gap: 16px;
     padding: 16px;
-    margin-bottom: 10px;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background-color: #ffffff;
     box-shadow: var(--shadow-sm);
     transition: 0.2s ease;
@@ -19,6 +24,38 @@
 .list-item:hover {
     border-color: #bfdbfe;
     box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+}
+
+.list-card-open .list-item {
+    border-radius: 12px 12px 0 0;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+.edit-panel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    animation: slideDown 0.18s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .list-item p {

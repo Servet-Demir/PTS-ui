@@ -1,24 +1,39 @@
 .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
     background-color: var(--card-color);
     border-bottom: 1px solid var(--border-color);
-    padding: 26px 32px 18px;
-    text-align: center;
+    padding: 18px 32px;
     box-shadow: var(--shadow-sm);
 }
 
+.navbar-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
 .navbar-title {
-    margin: 0 0 18px 0;
-    font-size: 32px;
+    margin: 0;
+    font-size: 24px;
     font-weight: 800;
     color: var(--text-color);
-    letter-spacing: -0.5px;
+    letter-spacing: -0.4px;
+}
+
+.navbar-subtitle {
+    font-size: 13px;
+    color: var(--muted-text);
+    font-weight: 500;
 }
 
 .navbar-links {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
