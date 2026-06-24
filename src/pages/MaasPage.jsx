@@ -70,13 +70,15 @@ function MaasPage() {
                     ))}
                 </select>
 
-                <input
+                <input style={{ margin: "5px" }}
                     type="date"
                     value={donem}
                     onChange={(e) => setDonem(e.target.value)}
                 />
 
-                <button onClick={handleMaasHesapla}>Maaş Hesapla</button>
+                <button onClick={handleMaasHesapla} style={{ margin: "5px" }}>
+                    Maaş Hesapla
+                </button>
 
                 <button onClick={fetchMaaslar}>Dönemlik Maaşları Listele</button>
             </div>
@@ -100,8 +102,6 @@ function MaasPage() {
                 </div>
             )}
 
-            <hr />
-
             <h3>Dönemlik Maaş Listesi</h3>
 
             {maaslar.length === 0 ? (
@@ -116,7 +116,7 @@ function MaasPage() {
                             {maas.ceza} - Net: {maas.netMaas}
                         </p>
 
-                        <button onClick={() => handleDelete(maas.maasId)}>
+                        <button className="delete-button" onClick={() => handleDelete(maas.maasId)}>
                             Sil
                         </button>
                     </div>
