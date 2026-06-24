@@ -111,53 +111,57 @@ function MesaiPage() {
         <div>
             <h2>Mesai Sayfası</h2>
 
-            <div>
+            <div className="form-section">
                 <h3>Personel ve Dönem Seç</h3>
 
-                <select value={personelId} onChange={(e) => setPersonelId(e.target.value)}>
-                    <option value="">Personel seçiniz</option>
+                <div className="form-row">
+                    <select value={personelId} onChange={(e) => setPersonelId(e.target.value)}>
+                        <option value="">Personel seçiniz</option>
 
-                    {personeller.map((personel) => (
-                        <option key={personel.personelId} value={personel.personelId}>
-                            {personel.ad} {personel.soyad}
-                        </option>
-                    ))}
-                </select>
+                        {personeller.map((personel) => (
+                            <option key={personel.personelId} value={personel.personelId}>
+                                {personel.ad} {personel.soyad}
+                            </option>
+                        ))}
+                    </select>
 
-                <input
-                    type="date"
-                    value={donem}
-                    onChange={(e) => setDonem(e.target.value)}
-                />
+                    <input
+                        type="date"
+                        value={donem}
+                        onChange={(e) => setDonem(e.target.value)}
+                    />
 
-                <button onClick={fetchMesailer}>Mesaileri Listele</button>
+                    <button onClick={fetchMesailer}>Mesaileri Listele</button>
+                </div>
             </div>
 
             <hr />
 
-            <div>
+            <div className="form-section">
                 <h3>Mesai Kaydı Ekle / Güncelle</h3>
 
-                <input
-                    type="date"
-                    value={tarih}
-                    onChange={(e) => setTarih(e.target.value)}
-                />
+                <div className="form-row">
+                    <input
+                        type="date"
+                        value={tarih}
+                        onChange={(e) => setTarih(e.target.value)}
+                    />
 
-                <input
-                    type="time"
-                    value={girisSaati}
-                    onChange={(e) => setGirisSaati(e.target.value)}
-                />
+                    <input
+                        type="time"
+                        value={girisSaati}
+                        onChange={(e) => setGirisSaati(e.target.value)}
+                    />
 
-                <input
-                    type="time"
-                    value={cikisSaati}
-                    onChange={(e) => setCikisSaati(e.target.value)}
-                />
+                    <input
+                        type="time"
+                        value={cikisSaati}
+                        onChange={(e) => setCikisSaati(e.target.value)}
+                    />
 
-                <button onClick={handleSave}>Mesai Ekle</button>
-                <button onClick={handleUpdate}>Mesai Güncelle</button>
+                    <button onClick={handleSave}>Mesai Ekle</button>
+                    <button onClick={handleUpdate}>Mesai Güncelle</button>
+                </div>
             </div>
 
             <hr />
@@ -168,25 +172,29 @@ function MesaiPage() {
                 <p>Mesai kaydı bulunamadı.</p>
             ) : (
                 mesailer.map((mesai) => (
-                    <div key={mesai.mesaiId}>
+                    <div className="list-item" key={mesai.mesaiId}>
                         <p>
                             ID: {mesai.mesaiId} - Tarih: {mesai.tarih} - Giriş:{" "}
                             {mesai.girisSaati} - Çıkış: {mesai.cikisSaati} - Durum:{" "}
                             {mesai.mesaiGecerli ? "Geçerli" : "Geçersiz"}
                         </p>
 
-                        <button onClick={() => handleEditClick(mesai)}>
-                            Düzenle
-                        </button>
+                        <div className="list-actions">
+                            <button onClick={() => handleEditClick(mesai)}>
+                                Düzenle
+                            </button>
 
-                        <button onClick={() => handleDelete(mesai.mesaiId)}>
-                            Sil
-                        </button>
+                            <button
+                                className="delete-button"
+                                onClick={() => handleDelete(mesai.mesaiId)}
+                            >
+                                Sil
+                            </button>
+                        </div>
                     </div>
                 ))
             )}
         </div>
     );
 }
-
 export default MesaiPage;
