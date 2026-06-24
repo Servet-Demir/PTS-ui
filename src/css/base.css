@@ -1,0 +1,40 @@
+:root {
+    --bg-color: #f4f7fb;
+    --card-color: #ffffff;
+    --text-color: #111827;
+    --muted-text: #6b7280;
+    --border-color: #e5e7eb;
+
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+
+    --danger-color: #dc2626;
+    --danger-hover: #b91c1c;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.app {
+    min-height: 100vh;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 24px 0;
+}

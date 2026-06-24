@@ -1,0 +1,49 @@
+.list-card {
+    margin-bottom: 12px;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: #ffffff;
+    box-shadow: var(--shadow-sm);
+    transition: 0.2s ease;
+}
+
+.list-item:hover {
+    border-color: #bfdbfe;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+}
+
+.list-item p {
+    margin: 0;
+    color: #374151;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.list-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.list-content {
+    flex: 1;
+}
+
+.list-content strong {
+    color: #111827;
+    font-weight: 700;
+}
+
+.list-content span {
+    color: var(--muted-text);
+    font-size: 14px;
+}

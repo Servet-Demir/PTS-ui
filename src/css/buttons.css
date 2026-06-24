@@ -1,0 +1,38 @@
+button {
+    height: 40px;
+    padding: 9px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    white-space: nowrap;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.delete-button {
+    background-color: var(--danger-color);
+}
+
+.delete-button:hover {
+    background-color: var(--danger-hover);
+}
+
+.secondary-button {
+    background-color: #6b7280;
+}
+
+.secondary-button:hover {
+    background-color: #4b5563;
+}

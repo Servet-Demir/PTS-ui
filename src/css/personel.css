@@ -1,0 +1,49 @@
+.personel-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.personel-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.personel-detail {
+    font-size: 14px;
+    color: var(--muted-text);
+}
+
+.personel-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.personel-edit-panel {
+    flex-wrap: wrap;
+}
+
+.personel-edit-panel input:not([type="checkbox"]),
+.personel-edit-panel select {
+    min-width: 170px;
+    flex: 1;
+}
+
+.personel-edit-panel .checkbox-label {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.personel-edit-panel .checkbox-label input {
+    width: auto;
+    min-width: auto;
+    height: auto;
+    flex: 0 0 auto;
+}

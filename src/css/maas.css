@@ -1,0 +1,63 @@
+.maas-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.maas-card {
+    padding: 18px;
+    background-color: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.maas-card-title {
+    margin: 0 0 8px 0;
+    color: var(--muted-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.maas-card-value {
+    margin: 0;
+    color: #111827;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.maas-card-small {
+    font-size: 18px;
+}
+
+.maas-meta-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.maas-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.maas-personel {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.maas-detail {
+    font-size: 14px;
+    color: var(--muted-text);
+}
+
+.maas-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}

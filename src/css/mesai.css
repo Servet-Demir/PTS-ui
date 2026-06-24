@@ -1,0 +1,33 @@
+.mesai-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mesai-date {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.mesai-detail {
+    font-size: 14px;
+    color: var(--muted-text);
+}
+
+.mesai-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.mesai-edit-panel {
+    flex-wrap: wrap;
+}
+
+.mesai-edit-panel input:not([type="checkbox"]) {
+    min-width: 170px;
+    flex: 1;
+}

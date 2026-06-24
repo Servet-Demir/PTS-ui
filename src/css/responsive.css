@@ -1,0 +1,47 @@
+@media (max-width: 900px) {
+    .maas-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        margin: 20px 12px;
+        padding: 20px;
+    }
+
+    .navbar-title {
+        font-size: 26px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input,
+    select,
+    button {
+        width: 100%;
+    }
+
+    .list-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .list-actions {
+        justify-content: flex-end;
+    }
+
+    .edit-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 600px) {
+    .maas-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
