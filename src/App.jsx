@@ -1,31 +1,30 @@
-import { Link, Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
 
 import BirimPage from "./pages/BirimPage";
 import PersonelPage from "./pages/PersonelPage";
 import MesaiPage from "./pages/MesaiPage";
 import MaasPage from "./pages/MaasPage";
+import NotFoundPage from "./pages/NotFoundPage";
+
+import "./App.css";
 
 function App() {
   return (
-    <div>
-      <h1>Personel Takip Sistemi</h1>
+    <div className="app">
+      <Navbar />
 
-      <nav>
-        <Link to="/birim">Birim</Link> |{" "}
-        <Link to="/personel">Personel</Link> |{" "}
-        <Link to="/mesai">Mesai</Link> |{" "}
-        <Link to="/maas">Maaş</Link>
-      </nav>
-
-      <hr />
-
-      <Routes>
-        <Route path="/" element={<Navigate to="/birim" />} />
-        <Route path="/birim" element={<BirimPage />} />
-        <Route path="/personel" element={<PersonelPage />} />
-        <Route path="/mesai" element={<MesaiPage />} />
-        <Route path="/maas" element={<MaasPage />} />
-      </Routes>
+      <main className="page-container">
+        <Routes>
+          <Route path="/" element={<Navigate to="/birim" />} />
+          <Route path="/birim" element={<BirimPage />} />
+          <Route path="/personel" element={<PersonelPage />} />
+          <Route path="/mesai" element={<MesaiPage />} />
+          <Route path="/maas" element={<MaasPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
     </div>
   );
 }
