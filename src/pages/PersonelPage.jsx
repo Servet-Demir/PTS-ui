@@ -11,6 +11,12 @@ function PersonelPage() {
     const [yonetici, setYonetici] = useState(false);
     const [birimId, setBirimId] = useState("");
     const [guncellenecekPersonelId, setGuncellenecekPersonelId] = useState(null);
+    const [duzenlenenPersonelId, setDuzenlenenPersonelId] = useState(null);
+    const [duzenlenenAd, setDuzenlenenAd] = useState("");
+    const [duzenlenenSoyad, setDuzenlenenSoyad] = useState("");
+    const [duzenlenenEmail, setDuzenlenenEmail] = useState("");
+    const [duzenlenenBirimId, setDuzenlenenBirimId] = useState("");
+    const [duzenlenenYonetici, setDuzenlenenYonetici] = useState(false);
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -51,46 +57,44 @@ function PersonelPage() {
         fetchPersoneller();
     };
 
-    const handleUpdate = async () => {
-        if (guncellenecekPersonelId === null) {
-            alert("Lütfen güncellenecek personeli seçiniz.");
-            return;
-        }
-
-        if (!birimId) {
-            alert("Lütfen birim seçiniz.");
+    const handleUpdate = async (id) => {
+        if (!duzenlenenAd || !duzenlenenSoyad || !duzenlenenEmail || !duzenlenenBirimId) {
+            alert("Lütfen tüm alanları doldurunuz.");
             return;
         }
 
         const guncelPersonel = {
-            ad: ad,
-            soyad: soyad,
-            email: email,
-            yonetici: yonetici,
+            ad: duzenlenenAd,
+            soyad: duzenlenenSoyad,
+            email: duzenlenenEmail,
+            yonetici: duzenlenenYonetici,
             birim: {
-                birimId: Number(birimId),
+                birimId: Number(duzenlenenBirimId),
             },
         };
 
-        await updatePersonel(guncellenecekPersonelId, guncelPersonel);
+        await updatePersonel(id, guncelPersonel);
 
-        setAd("");
-        setSoyad("");
-        setEmail("");
-        setYonetici(false);
-        setBirimId("");
-        setGuncellenecekPersonelId(null);
-
+        handleCancelEdit();
         fetchPersoneller();
     };
 
     const handleEditClick = (personel) => {
-        setGuncellenecekPersonelId(personel.personelId);
-        setAd(personel.ad);
-        setSoyad(personel.soyad);
-        setEmail(personel.email);
-        setYonetici(personel.yonetici);
-        setBirimId(personel.birim.birimId);
+        setDuzenlenenPersonelId(personel.personelId);
+        setDuzenlenenAd(personel.ad);
+        setDuzenlenenSoyad(personel.soyad);
+        setDuzenlenenEmail(personel.email);
+        setDuzenlenenBirimId(personel.birim?.birimId || "");
+        setDuzenlenenYonetici(personel.yonetici);
+    };
+
+    const handleCancelEdit = () => {
+        setDuzenlenenPersonelId(null);
+        setDuzenlenenAd("");
+        setDuzenlenenSoyad("");
+        setDuzenlenenEmail("");
+        setDuzenlenenBirimId("");
+        setDuzenlenenYonetici(false);
     };
 
     useEffect(() => {
@@ -145,7 +149,6 @@ function PersonelPage() {
                     </label>
 
                     <button onClick={handleSave}>Personel Ekle</button>
-                    <button onClick={handleUpdate}>Personel Güncelle</button>
                 </div>
             </div>
 
@@ -153,27 +156,118 @@ function PersonelPage() {
 
             <h3>Personel Listesi</h3>
 
-            {personeller.map((personel) => (
-                <div className="list-item" key={personel.personelId}>
-                    <p>
-                        {personel.personelId} - {personel.ad} {personel.soyad} - {personel.email} -{" "}
-                        {personel.birim?.ad} - {personel.yonetici ? "Yönetici" : "Personel"}
-                    </p>
-
-                    <div className="list-actions">
-                        <button onClick={() => handleEditClick(personel)}>
-                            Düzenle
-                        </button>
-
-                        <button
-                            className="delete-button"
-                            onClick={() => handleDelete(personel.personelId)}
-                        >
-                            Sil
-                        </button>
-                    </div>
+            {personeller.length === 0 ? (
+                <div className="empty-state">
+                    Henüz personel kaydı bulunmuyor.
                 </div>
-            ))}
+            ) : (
+                personeller.map((personel) => (
+                    <div className="list-card" key={personel.personelId}>
+                        <div className="list-item">
+                            <div className="personel-info">
+                                <div className="personel-name">
+                                    {personel.ad} {personel.soyad}
+                                </div>
+
+                                <div className="personel-detail">
+                                    {personel.email}
+                                </div>
+
+                                <div className="personel-meta">
+                                    <span className="badge badge-green">
+                                        {personel.birim?.ad}
+                                    </span>
+
+                                    <span
+                                        className={
+                                            personel.yonetici
+                                                ? "badge badge-blue"
+                                                : "badge badge-gray"
+                                        }
+                                    >
+                                        {personel.yonetici ? "Yönetici" : "Personel"}
+                                    </span>
+
+                                    <span className="personel-detail">
+                                        ID: {personel.personelId}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="list-actions">
+                                <button onClick={() => handleEditClick(personel)}>
+                                    Düzenle
+                                </button>
+
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(personel.personelId)}
+                                >
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+
+                        {duzenlenenPersonelId === personel.personelId && (
+                            <div className="edit-panel personel-edit-panel">
+                                <input
+                                    type="text"
+                                    placeholder="Ad"
+                                    value={duzenlenenAd}
+                                    onChange={(e) => setDuzenlenenAd(e.target.value)}
+                                />
+
+                                <input
+                                    type="text"
+                                    placeholder="Soyad"
+                                    value={duzenlenenSoyad}
+                                    onChange={(e) => setDuzenlenenSoyad(e.target.value)}
+                                />
+
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={duzenlenenEmail}
+                                    onChange={(e) => setDuzenlenenEmail(e.target.value)}
+                                />
+
+                                <select
+                                    value={duzenlenenBirimId}
+                                    onChange={(e) => setDuzenlenenBirimId(e.target.value)}
+                                >
+                                    <option value="">Birim seçiniz</option>
+
+                                    {birimler.map((birim) => (
+                                        <option key={birim.birimId} value={birim.birimId}>
+                                            {birim.ad}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <label className="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={duzenlenenYonetici}
+                                        onChange={(e) => setDuzenlenenYonetici(e.target.checked)}
+                                    />
+                                    Yönetici mi?
+                                </label>
+
+                                <button onClick={() => handleUpdate(personel.personelId)}>
+                                    Güncelle
+                                </button>
+
+                                <button
+                                    className="secondary-button"
+                                    onClick={handleCancelEdit}
+                                >
+                                    Vazgeç
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ))
+            )}
         </div>
     );
 }
