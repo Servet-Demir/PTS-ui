@@ -32,24 +32,39 @@ function BirimPage() {
         <div>
             <h2>Birim Sayfası</h2>
 
-            <input
-                type="text"
-                placeholder="Birim adı"
-                value={ad}
-                onChange={(e) => setAd(e.target.value)}
-            />
-            <button onClick={handleSave}>Birim Ekle</button>
+            <div className="form-section">
+                <div className="form-row">
+                    <input
+                        type="text"
+                        placeholder="Birim adı"
+                        value={ad}
+                        onChange={(e) => setAd(e.target.value)}
+                    />
+
+                    <button onClick={handleSave}>
+                        Birim Ekle
+                    </button>
+                </div>
+            </div>
+
+            <hr />
 
             <h3>Birim Listesi</h3>
 
             {birimler.map((birim) => (
-                <div key={birim.birimId}>
+                <div className="list-item" key={birim.birimId}>
                     <p>
                         {birim.birimId} - {birim.ad}
                     </p>
-                    <button onClick={() => handleDelete(birim.birimId)}>
-                        Sil
-                    </button>
+
+                    <div className="list-actions">
+                        <button
+                            className="delete-button"
+                            onClick={() => handleDelete(birim.birimId)}
+                        >
+                            Sil
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>
