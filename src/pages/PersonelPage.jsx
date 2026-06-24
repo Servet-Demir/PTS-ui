@@ -10,7 +10,7 @@ function PersonelPage() {
     const [email, setEmail] = useState("");
     const [yonetici, setYonetici] = useState(false);
     const [birimId, setBirimId] = useState("");
-    const [guncellenecekPersonelId, setGuncellenecekPersonelId] = useState(null);
+
     const [duzenlenenPersonelId, setDuzenlenenPersonelId] = useState(null);
     const [duzenlenenAd, setDuzenlenenAd] = useState("");
     const [duzenlenenSoyad, setDuzenlenenSoyad] = useState("");
@@ -104,9 +104,16 @@ function PersonelPage() {
 
     return (
         <div>
-            <h2>Personel Sayfası</h2>
+            <div className="page-header">
+                <h2>Personel Yönetimi</h2>
+                <p className="page-subtitle">
+                    Personelleri ekleyebilir, birim bilgilerini düzenleyebilir ve görev durumlarını yönetebilirsin.
+                </p>
+            </div>
 
             <div className="form-section">
+                <h3 className="section-title">Yeni Personel Ekle</h3>
+
                 <div className="form-row">
                     <input
                         type="text"
@@ -162,7 +169,10 @@ function PersonelPage() {
                 </div>
             ) : (
                 personeller.map((personel) => (
-                    <div className="list-card" key={personel.personelId}>
+                    <div
+                        className={`list-card ${duzenlenenPersonelId === personel.personelId ? "list-card-open" : ""}`}
+                        key={personel.personelId}
+                    >
                         <div className="list-item">
                             <div className="personel-info">
                                 <div className="personel-name">

@@ -109,10 +109,14 @@ function MesaiPage() {
 
     return (
         <div>
-            <h2>Mesai Sayfası</h2>
-
+            <div className="page-header">
+                <h2>Mesai Yönetimi</h2>
+                <p className="page-subtitle">
+                    Personellerin dönemlik mesai kayıtlarını listeleyebilir, yeni kayıt ekleyebilir ve mevcut kayıtları güncelleyebilirsin.
+                </p>
+            </div>
             <div className="form-section">
-                <h3>Personel ve Dönem Seç</h3>
+                <h3 className="section-title">Personel ve Dönem Seç</h3>
 
                 <div className="form-row">
                     <select value={personelId} onChange={(e) => setPersonelId(e.target.value)}>
@@ -138,7 +142,7 @@ function MesaiPage() {
             <hr />
 
             <div className="form-section">
-                <h3>Mesai Kaydı Ekle / Güncelle</h3>
+                <h3 className="section-title">Yeni Mesai Kaydı Ekle</h3>
 
                 <div className="form-row">
                     <input
@@ -173,7 +177,10 @@ function MesaiPage() {
                 </div>
             ) : (
                 mesailer.map((mesai) => (
-                    <div className="list-card" key={mesai.mesaiId}>
+                    <div
+                        className={`list-card ${duzenlenenMesaiId === mesai.mesaiId ? "list-card-open" : ""}`}
+                        key={mesai.mesaiId}
+                    >
                         <div className="list-item">
                             <div className="mesai-info">
                                 <div className="mesai-date">

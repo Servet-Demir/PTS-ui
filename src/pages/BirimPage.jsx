@@ -99,7 +99,10 @@ function BirimPage() {
                 </div>
             ) : (
                 birimler.map((birim) => (
-                    <div className="list-card" key={birim.birimId}>
+                    <div
+                        className={`list-card ${duzenlenenBirimId === birim.birimId ? "list-card-open" : ""}`}
+                        key={birim.birimId}
+                    >
                         <div className="list-item">
                             <div className="list-content">
                                 <strong>{birim.ad}</strong>
