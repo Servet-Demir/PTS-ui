@@ -17,8 +17,10 @@ function MesaiPage() {
     const [tarih, setTarih] = useState("");
     const [girisSaati, setGirisSaati] = useState("");
     const [cikisSaati, setCikisSaati] = useState("");
-
-    const [guncellenecekMesaiId, setGuncellenecekMesaiId] = useState(null);
+    const [duzenlenenMesaiId, setDuzenlenenMesaiId] = useState(null);
+    const [duzenlenenTarih, setDuzenlenenTarih] = useState("");
+    const [duzenlenenGirisSaati, setDuzenlenenGirisSaati] = useState("");
+    const [duzenlenenCikisSaati, setDuzenlenenCikisSaati] = useState("");
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -65,36 +67,34 @@ function MesaiPage() {
     };
 
     const handleEditClick = (mesai) => {
-        setGuncellenecekMesaiId(mesai.mesaiId);
-        setTarih(mesai.tarih);
-        setGirisSaati(mesai.girisSaati);
-        setCikisSaati(mesai.cikisSaati);
+        setDuzenlenenMesaiId(mesai.mesaiId);
+        setDuzenlenenTarih(mesai.tarih);
+        setDuzenlenenGirisSaati(mesai.girisSaati);
+        setDuzenlenenCikisSaati(mesai.cikisSaati);
     };
 
-    const handleUpdate = async () => {
-        if (guncellenecekMesaiId === null) {
-            alert("Lütfen güncellenecek mesai kaydını seçiniz.");
-            return;
-        }
+    const handleCancelEdit = () => {
+        setDuzenlenenMesaiId(null);
+        setDuzenlenenTarih("");
+        setDuzenlenenGirisSaati("");
+        setDuzenlenenCikisSaati("");
+    };
 
-        if (!girisSaati || !cikisSaati) {
-            alert("Lütfen giriş ve çıkış saatini giriniz.");
+    const handleUpdate = async (id) => {
+        if (!duzenlenenTarih || !duzenlenenGirisSaati || !duzenlenenCikisSaati) {
+            alert("Lütfen tüm alanları doldurunuz.");
             return;
         }
 
         const guncelMesai = {
-            tarih: tarih,
-            girisSaati: girisSaati,
-            cikisSaati: cikisSaati,
+            tarih: duzenlenenTarih,
+            girisSaati: duzenlenenGirisSaati,
+            cikisSaati: duzenlenenCikisSaati,
         };
 
-        await updateMesai(guncellenecekMesaiId, guncelMesai);
+        await updateMesai(id, guncelMesai);
 
-        setGuncellenecekMesaiId(null);
-        setTarih("");
-        setGirisSaati("");
-        setCikisSaati("");
-
+        handleCancelEdit();
         fetchMesailer();
     };
 
@@ -160,7 +160,6 @@ function MesaiPage() {
                     />
 
                     <button onClick={handleSave}>Mesai Ekle</button>
-                    <button onClick={handleUpdate}>Mesai Güncelle</button>
                 </div>
             </div>
 
@@ -169,28 +168,85 @@ function MesaiPage() {
             <h3>Mesai Listesi</h3>
 
             {mesailer.length === 0 ? (
-                <p>Mesai kaydı bulunamadı.</p>
+                <div className="empty-state">
+                    Mesai kaydı bulunamadı.
+                </div>
             ) : (
                 mesailer.map((mesai) => (
-                    <div className="list-item" key={mesai.mesaiId}>
-                        <p>
-                            ID: {mesai.mesaiId} - Tarih: {mesai.tarih} - Giriş:{" "}
-                            {mesai.girisSaati} - Çıkış: {mesai.cikisSaati} - Durum:{" "}
-                            {mesai.mesaiGecerli ? "Geçerli" : "Geçersiz"}
-                        </p>
+                    <div className="list-card" key={mesai.mesaiId}>
+                        <div className="list-item">
+                            <div className="mesai-info">
+                                <div className="mesai-date">
+                                    {mesai.tarih}
+                                </div>
 
-                        <div className="list-actions">
-                            <button onClick={() => handleEditClick(mesai)}>
-                                Düzenle
-                            </button>
+                                <div className="mesai-detail">
+                                    Giriş: {mesai.girisSaati} - Çıkış: {mesai.cikisSaati}
+                                </div>
 
-                            <button
-                                className="delete-button"
-                                onClick={() => handleDelete(mesai.mesaiId)}
-                            >
-                                Sil
-                            </button>
+                                <div className="mesai-meta">
+                                    <span
+                                        className={
+                                            mesai.mesaiGecerli
+                                                ? "badge badge-green"
+                                                : "badge badge-red"
+                                        }
+                                    >
+                                        {mesai.mesaiGecerli ? "Geçerli" : "Geçersiz"}
+                                    </span>
+
+                                    <span className="mesai-detail">
+                                        ID: {mesai.mesaiId}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="list-actions">
+                                <button onClick={() => handleEditClick(mesai)}>
+                                    Düzenle
+                                </button>
+
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(mesai.mesaiId)}
+                                >
+                                    Sil
+                                </button>
+                            </div>
                         </div>
+
+                        {duzenlenenMesaiId === mesai.mesaiId && (
+                            <div className="edit-panel mesai-edit-panel">
+                                <input
+                                    type="date"
+                                    value={duzenlenenTarih}
+                                    onChange={(e) => setDuzenlenenTarih(e.target.value)}
+                                />
+
+                                <input
+                                    type="time"
+                                    value={duzenlenenGirisSaati}
+                                    onChange={(e) => setDuzenlenenGirisSaati(e.target.value)}
+                                />
+
+                                <input
+                                    type="time"
+                                    value={duzenlenenCikisSaati}
+                                    onChange={(e) => setDuzenlenenCikisSaati(e.target.value)}
+                                />
+
+                                <button onClick={() => handleUpdate(mesai.mesaiId)}>
+                                    Güncelle
+                                </button>
+
+                                <button
+                                    className="secondary-button"
+                                    onClick={handleCancelEdit}
+                                >
+                                    Vazgeç
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ))
             )}
