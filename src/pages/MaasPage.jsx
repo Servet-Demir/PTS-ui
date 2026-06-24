@@ -55,70 +55,145 @@ function MaasPage() {
 
     return (
         <div>
-            <h2>Maaş Sayfası</h2>
-
-            <div>
-                <h3>Maaş Hesapla</h3>
-
-                <select value={personelId} onChange={(e) => setPersonelId(e.target.value)}>
-                    <option value="">Personel seçiniz</option>
-
-                    {personeller.map((personel) => (
-                        <option key={personel.personelId} value={personel.personelId}>
-                            {personel.ad} {personel.soyad}
-                        </option>
-                    ))}
-                </select>
-
-                <input style={{ margin: "5px" }}
-                    type="date"
-                    value={donem}
-                    onChange={(e) => setDonem(e.target.value)}
-                />
-
-                <button onClick={handleMaasHesapla} style={{ margin: "5px" }}>
-                    Maaş Hesapla
-                </button>
-
-                <button onClick={fetchMaaslar}>Dönemlik Maaşları Listele</button>
+            <div className="page-header">
+                <h2>Maaş Yönetimi</h2>
+                <p className="page-subtitle">
+                    Personellerin dönemlik maaşlarını hesaplayabilir ve kayıtlı maaşları listeleyebilirsin.
+                </p>
             </div>
 
-            <hr />
+            <div className="form-section">
+                <h3 className="section-title">Maaş Hesapla</h3>
+
+                <div className="form-row">
+                    <select
+                        value={personelId}
+                        onChange={(e) => setPersonelId(e.target.value)}
+                    >
+                        <option value="">Personel seçiniz</option>
+
+                        {personeller.map((personel) => (
+                            <option
+                                key={personel.personelId}
+                                value={personel.personelId}
+                            >
+                                {personel.ad} {personel.soyad}
+                            </option>
+                        ))}
+                    </select>
+
+                    <input
+                        type="date"
+                        value={donem}
+                        onChange={(e) => setDonem(e.target.value)}
+                    />
+
+                    <button onClick={handleMaasHesapla}>
+                        Maaş Hesapla
+                    </button>
+
+                    <button onClick={fetchMaaslar}>
+                        Dönemlik Maaşları Listele
+                    </button>
+                </div>
+            </div>
 
             {hesaplananMaas && (
-                <div>
+                <>
                     <h3>Son Hesaplanan Maaş</h3>
 
-                    <p>
-                        Personel: {hesaplananMaas.personel?.ad}{" "}
-                        {hesaplananMaas.personel?.soyad}
-                    </p>
+                    <div className="maas-summary-grid">
+                        <div className="maas-card">
+                            <p className="maas-card-title">Personel</p>
+                            <p className="maas-card-value maas-card-small">
+                                {hesaplananMaas.personel?.ad}{" "}
+                                {hesaplananMaas.personel?.soyad}
+                            </p>
+                        </div>
 
-                    <p>Dönem: {hesaplananMaas.donem}</p>
-                    <p>Brüt Maaş: {hesaplananMaas.brutMaas}</p>
-                    <p>Geçersiz Gün: {hesaplananMaas.gecersizGun}</p>
-                    <p>Ceza: {hesaplananMaas.ceza}</p>
-                    <p>Net Maaş: {hesaplananMaas.netMaas}</p>
-                </div>
+                        <div className="maas-card">
+                            <p className="maas-card-title">Brüt Maaş</p>
+                            <p className="maas-card-value">
+                                {hesaplananMaas.brutMaas} ₺
+                            </p>
+                        </div>
+
+                        <div className="maas-card">
+                            <p className="maas-card-title">Ceza</p>
+                            <p className="maas-card-value">
+                                {hesaplananMaas.ceza} ₺
+                            </p>
+                        </div>
+
+                        <div className="maas-card">
+                            <p className="maas-card-title">Net Maaş</p>
+                            <p className="maas-card-value">
+                                {hesaplananMaas.netMaas} ₺
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="maas-meta-row">
+                        <span className="badge badge-blue">
+                            Dönem: {hesaplananMaas.donem}
+                        </span>
+
+                        <span className="badge badge-red">
+                            Geçersiz Gün: {hesaplananMaas.gecersizGun}
+                        </span>
+                    </div>
+                </>
             )}
 
             <h3>Dönemlik Maaş Listesi</h3>
 
             {maaslar.length === 0 ? (
-                <p>Bu döneme ait maaş kaydı yok.</p>
+                <div className="empty-state">
+                    Bu döneme ait maaş kaydı bulunmuyor.
+                </div>
             ) : (
                 maaslar.map((maas) => (
-                    <div key={maas.maasId}>
-                        <p>
-                            ID: {maas.maasId} - Personel: {maas.personel?.ad}{" "}
-                            {maas.personel?.soyad} - Dönem: {maas.donem} - Brüt:{" "}
-                            {maas.brutMaas} - Geçersiz Gün: {maas.gecersizGun} - Ceza:{" "}
-                            {maas.ceza} - Net: {maas.netMaas}
-                        </p>
+                    <div className="list-item" key={maas.maasId}>
+                        <div className="maas-info">
+                            <div className="maas-personel">
+                                {maas.personel?.ad} {maas.personel?.soyad}
+                            </div>
 
-                        <button className="delete-button" onClick={() => handleDelete(maas.maasId)}>
-                            Sil
-                        </button>
+                            <div className="maas-detail">
+                                Dönem: {maas.donem}
+                            </div>
+
+                            <div className="maas-meta">
+                                <span className="badge badge-green">
+                                    Net: {maas.netMaas} ₺
+                                </span>
+
+                                <span className="badge badge-blue">
+                                    Brüt: {maas.brutMaas} ₺
+                                </span>
+
+                                <span className="badge badge-red">
+                                    Ceza: {maas.ceza} ₺
+                                </span>
+
+                                <span className="maas-detail">
+                                    Geçersiz Gün: {maas.gecersizGun}
+                                </span>
+
+                                <span className="maas-detail">
+                                    ID: {maas.maasId}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="list-actions">
+                            <button
+                                className="delete-button"
+                                onClick={() => handleDelete(maas.maasId)}
+                            >
+                                Sil
+                            </button>
+                        </div>
                     </div>
                 ))
             )}
