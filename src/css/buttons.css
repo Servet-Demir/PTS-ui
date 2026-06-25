@@ -19,6 +19,7 @@ button {
 button:hover {
     background-color: var(--primary-hover);
     transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
 }
 
 button:active {
@@ -31,6 +32,7 @@ button:active {
 
 .delete-button:hover {
     background-color: var(--danger-hover);
+    box-shadow: 0 6px 14px rgba(220, 38, 38, 0.2);
 }
 
 .secondary-button {
