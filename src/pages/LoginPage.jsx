@@ -7,7 +7,7 @@ function LoginPage({ onLogin }) {
     const [hata, setHata] = useState("");
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); //sayfanın yenilenmesini engellemek için
 
         try {
             const response = await login({
