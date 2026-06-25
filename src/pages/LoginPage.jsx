@@ -5,35 +5,20 @@ function LoginPage({ onLogin }) {
     const [email, setEmail] = useState("");
     const [sifre, setSifre] = useState("");
     const [hata, setHata] = useState("");
-    const [yukleniyor, setYukleniyor] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!email || !sifre) {
-            setHata("Lütfen email ve şifre alanlarını doldurunuz.");
-            return;
-        }
-
-        const kullanici = {
-            email: email,
-            sifre: sifre,
-        };
-
         try {
-            setYukleniyor(true);
-            setHata("");
-
-            const response = await login(kullanici);
+            const response = await login({
+                email: email,
+                sifre: sifre
+            });
 
             onLogin(response.data);
         } catch (error) {
             console.log(error);
-            console.log(error.response);
-
             setHata("Email veya şifre hatalı.");
-        } finally {
-            setYukleniyor(false);
         }
     };
 
@@ -66,14 +51,10 @@ function LoginPage({ onLogin }) {
                         />
                     </div>
 
-                    {hata && (
-                        <div className="login-error">
-                            {hata}
-                        </div>
-                    )}
+                    {hata && <div className="login-error">{hata}</div>}
 
-                    <button type="submit" disabled={yukleniyor}>
-                        {yukleniyor ? "Giriş yapılıyor..." : "Giriş Yap"}
+                    <button type="submit">
+                        Giriş Yap
                     </button>
                 </form>
             </div>
