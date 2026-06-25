@@ -24,12 +24,6 @@
     letter-spacing: -0.4px;
 }
 
-.navbar-subtitle {
-    font-size: 13px;
-    color: var(--muted-text);
-    font-weight: 500;
-}
-
 .navbar-right {
     display: flex;
     align-items: center;
@@ -90,4 +84,13 @@
 
 .logout-button:hover {
     background-color: #4b5563;
+}
+
+.navbar-links a,
+.logout-button,
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
 }
