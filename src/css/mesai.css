@@ -31,3 +31,60 @@
     min-width: 170px;
     flex: 1;
 }
+
+.period-summary {
+    margin-bottom: 24px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.period-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.period-summary-header h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.period-summary-header p {
+    margin: 0;
+    color: var(--muted-text);
+    font-size: 14px;
+}
+
+.period-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.period-summary-card {
+    padding: 14px;
+    background-color: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.period-summary-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.period-summary-card strong {
+    color: #111827;
+    font-size: 17px;
+    font-weight: 800;
+}

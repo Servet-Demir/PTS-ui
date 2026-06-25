@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 
+import LoginPage from "./pages/LoginPage";
 import BirimPage from "./pages/BirimPage";
 import PersonelPage from "./pages/PersonelPage";
 import MesaiPage from "./pages/MesaiPage";
@@ -11,9 +13,26 @@ import NotFoundPage from "./pages/NotFoundPage";
 import "./App.css";
 
 function App() {
+  const [girisYapanKullanici, setGirisYapanKullanici] = useState(null);
+
+  const handleLogin = (kullanici) => {
+    setGirisYapanKullanici(kullanici);
+  };
+
+  const handleLogout = () => {
+    setGirisYapanKullanici(null);
+  };
+
+  if (!girisYapanKullanici) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <div className="app">
-      <Navbar />
+      <Navbar
+        kullanici={girisYapanKullanici}
+        onLogout={handleLogout}
+      />
 
       <main className="page-container">
         <Routes>
