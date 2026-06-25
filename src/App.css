@@ -1,5 +1,6 @@
 @import "./css/base.css";
 @import "./css/navbar.css";
+@import "./css/footer.css";
 @import "./css/layout.css";
 @import "./css/forms.css";
 @import "./css/buttons.css";
@@ -11,4 +12,5 @@
 @import "./css/maas.css";
 @import "./css/login.css";
 @import "./css/popup.css";
+@import "./css/animations.css";
 @import "./css/responsive.css";

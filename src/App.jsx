@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 import LoginPage from "./pages/LoginPage";
 import BirimPage from "./pages/BirimPage";
@@ -44,6 +45,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 }
