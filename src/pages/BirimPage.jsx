@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import ConfirmPopup from "../components/ConfirmPopup";
+import InfoPopup from "../components/InfoPopup";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import {
     getAllBirimler,
@@ -10,7 +12,8 @@ import {
 function BirimPage() {
     const [birimler, setBirimler] = useState([]);
     const [ad, setAd] = useState("");
-
+    const [silinecekBirimId, setSilinecekBirimId] = useState(null);
+    const [uyariMesaji, setUyariMesaji] = useState("");
     const [duzenlenenBirimId, setDuzenlenenBirimId] = useState(null);
     const [duzenlenenAd, setDuzenlenenAd] = useState("");
 
@@ -57,9 +60,20 @@ function BirimPage() {
         fetchBirimler();
     };
 
-    const handleDelete = async (id) => {
-        await deleteBirim(id);
-        fetchBirimler();
+    const handleDelete = async () => {
+        try {
+            await deleteBirim(silinecekBirimId);
+
+            setSilinecekBirimId(null);
+            fetchBirimler();
+        } catch (error) {
+            console.log(error);
+
+            setSilinecekBirimId(null);
+            setUyariMesaji(
+                "Bu birim içerisinde personel bulunduğu için silinemez. Önce bu birime bağlı personelleri silmeniz veya başka bir birime taşımanız gerekir."
+            );
+        }
     };
 
     useEffect(() => {
@@ -115,7 +129,10 @@ function BirimPage() {
                                     Düzenle
                                 </button>
 
-                                <button className="delete-button" onClick={() => handleDelete(birim.birimId)}>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => setSilinecekBirimId(birim.birimId)}
+                                >
                                     <FaTrash />
                                     Sil
                                 </button>
@@ -146,6 +163,19 @@ function BirimPage() {
                         )}
                     </div>
                 ))
+            )}
+            {silinecekBirimId !== null && (
+                <ConfirmPopup
+                    mesaj="Bu birimi silmek istediğinize emin misiniz?"
+                    onConfirm={handleDelete}
+                    onCancel={() => setSilinecekBirimId(null)}
+                />
+            )}
+            {uyariMesaji && (
+                <InfoPopup
+                    mesaj={uyariMesaji}
+                    onClose={() => setUyariMesaji("")}
+                />
             )}
         </div>
     );

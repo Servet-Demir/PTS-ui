@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
-import { getAllPersoneller, getPersonelDonemOzeti } from "../api/personelApi";
+import ConfirmPopup from "../components/ConfirmPopup";
 import {
-    saveMesai,
-    updateMesai,
-    deleteMesai,
-} from "../api/mesaiApi";
+    FaPlus,
+    FaEdit,
+    FaTrash,
+    FaCheck,
+    FaTimes,
+    FaList,
+} from "react-icons/fa";
+import { getAllPersoneller, getPersonelDonemOzeti } from "../api/personelApi";
+import { saveMesai, updateMesai, deleteMesai } from "../api/mesaiApi";
 
 function MesaiPage() {
     const [personeller, setPersoneller] = useState([]);
@@ -24,6 +28,8 @@ function MesaiPage() {
     const [duzenlenenTarih, setDuzenlenenTarih] = useState("");
     const [duzenlenenGirisSaati, setDuzenlenenGirisSaati] = useState("");
     const [duzenlenenCikisSaati, setDuzenlenenCikisSaati] = useState("");
+
+    const [silinecekMesaiId, setSilinecekMesaiId] = useState(null);
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -110,8 +116,9 @@ function MesaiPage() {
         fetchMesailer();
     };
 
-    const handleDelete = async (id) => {
-        await deleteMesai(id);
+    const handleDelete = async () => {
+        await deleteMesai(silinecekMesaiId);
+        setSilinecekMesaiId(null);
         fetchMesailer();
     };
 
@@ -138,7 +145,10 @@ function MesaiPage() {
                         <option value="">Personel seçiniz</option>
 
                         {personeller.map((personel) => (
-                            <option key={personel.personelId} value={personel.personelId}>
+                            <option
+                                key={personel.personelId}
+                                value={personel.personelId}
+                            >
                                 {personel.ad} {personel.soyad}
                             </option>
                         ))}
@@ -151,7 +161,7 @@ function MesaiPage() {
                     />
 
                     <button onClick={fetchMesailer}>
-                        <FaPlus />
+                        <FaList />
                         Mesaileri Listele
                     </button>
                 </div>
@@ -168,9 +178,7 @@ function MesaiPage() {
                             </p>
                         </div>
 
-                        <span className="badge badge-blue">
-                            {donem}
-                        </span>
+                        <span className="badge badge-blue">{donem}</span>
                     </div>
 
                     <div className="period-summary-grid">
@@ -246,18 +254,19 @@ function MesaiPage() {
             ) : (
                 mesailer.map((mesai) => (
                     <div
-                        className={`list-card ${duzenlenenMesaiId === mesai.mesaiId ? "list-card-open" : ""
+                        className={`list-card ${duzenlenenMesaiId === mesai.mesaiId
+                                ? "list-card-open"
+                                : ""
                             }`}
                         key={mesai.mesaiId}
                     >
                         <div className="list-item">
                             <div className="mesai-info">
-                                <div className="mesai-date">
-                                    {mesai.tarih}
-                                </div>
+                                <div className="mesai-date">{mesai.tarih}</div>
 
                                 <div className="mesai-detail">
-                                    Giriş: {mesai.girisSaati} - Çıkış: {mesai.cikisSaati}
+                                    Giriş: {mesai.girisSaati} - Çıkış:{" "}
+                                    {mesai.cikisSaati}
                                 </div>
 
                                 <div className="mesai-meta">
@@ -268,7 +277,9 @@ function MesaiPage() {
                                                 : "badge badge-red"
                                         }
                                     >
-                                        {mesai.mesaiGecerli ? "Geçerli" : "Geçersiz"}
+                                        {mesai.mesaiGecerli
+                                            ? "Geçerli"
+                                            : "Geçersiz"}
                                     </span>
 
                                     <span className="mesai-detail">
@@ -285,7 +296,7 @@ function MesaiPage() {
 
                                 <button
                                     className="delete-button"
-                                    onClick={() => handleDelete(mesai.mesaiId)}
+                                    onClick={() => setSilinecekMesaiId(mesai.mesaiId)}
                                 >
                                     <FaTrash />
                                     Sil
@@ -298,19 +309,25 @@ function MesaiPage() {
                                 <input
                                     type="date"
                                     value={duzenlenenTarih}
-                                    onChange={(e) => setDuzenlenenTarih(e.target.value)}
+                                    onChange={(e) =>
+                                        setDuzenlenenTarih(e.target.value)
+                                    }
                                 />
 
                                 <input
                                     type="time"
                                     value={duzenlenenGirisSaati}
-                                    onChange={(e) => setDuzenlenenGirisSaati(e.target.value)}
+                                    onChange={(e) =>
+                                        setDuzenlenenGirisSaati(e.target.value)
+                                    }
                                 />
 
                                 <input
                                     type="time"
                                     value={duzenlenenCikisSaati}
-                                    onChange={(e) => setDuzenlenenCikisSaati(e.target.value)}
+                                    onChange={(e) =>
+                                        setDuzenlenenCikisSaati(e.target.value)
+                                    }
                                 />
 
                                 <button onClick={() => handleUpdate(mesai.mesaiId)}>
@@ -329,6 +346,14 @@ function MesaiPage() {
                         )}
                     </div>
                 ))
+            )}
+
+            {silinecekMesaiId !== null && (
+                <ConfirmPopup
+                    mesaj="Bu mesai kaydını silmek istediğinize emin misiniz?"
+                    onConfirm={handleDelete}
+                    onCancel={() => setSilinecekMesaiId(null)}
+                />
             )}
         </div>
     );

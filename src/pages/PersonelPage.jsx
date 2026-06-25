@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
+import ConfirmPopup from "../components/ConfirmPopup";
 import { getAllBirimler } from "../api/birimApi";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
-import { getAllPersoneller, savePersonel, deletePersonel, updatePersonel } from "../api/personelApi";
+import {
+    getAllPersoneller,
+    savePersonel,
+    deletePersonel,
+    updatePersonel,
+} from "../api/personelApi";
 
 function PersonelPage() {
     const [personeller, setPersoneller] = useState([]);
     const [birimler, setBirimler] = useState([]);
+
     const [ad, setAd] = useState("");
     const [soyad, setSoyad] = useState("");
     const [email, setEmail] = useState("");
     const [yonetici, setYonetici] = useState(false);
     const [birimId, setBirimId] = useState("");
+
+    const [silinecekPersonelId, setSilinecekPersonelId] = useState(null);
 
     const [duzenlenenPersonelId, setDuzenlenenPersonelId] = useState(null);
     const [duzenlenenAd, setDuzenlenenAd] = useState("");
@@ -41,42 +50,24 @@ function PersonelPage() {
             email: email,
             yonetici: yonetici,
             birim: {
-                birimId: Number(birimId), // API'ye uygun şekilde birimId'yi sayıya çeviriyoruz
+                birimId: Number(birimId),
             },
         };
+
         await savePersonel(yeniPersonel);
+
         setAd("");
         setSoyad("");
         setEmail("");
         setYonetici(false);
         setBirimId("");
+
         fetchPersoneller();
     };
 
-    const handleDelete = async (id) => {
-        await deletePersonel(id);
-        fetchPersoneller();
-    };
-
-    const handleUpdate = async (id) => {
-        if (!duzenlenenAd || !duzenlenenSoyad || !duzenlenenEmail || !duzenlenenBirimId) {
-            alert("Lütfen tüm alanları doldurunuz.");
-            return;
-        }
-
-        const guncelPersonel = {
-            ad: duzenlenenAd,
-            soyad: duzenlenenSoyad,
-            email: duzenlenenEmail,
-            yonetici: duzenlenenYonetici,
-            birim: {
-                birimId: Number(duzenlenenBirimId),
-            },
-        };
-
-        await updatePersonel(id, guncelPersonel);
-
-        handleCancelEdit();
+    const handleDelete = async () => {
+        await deletePersonel(silinecekPersonelId);
+        setSilinecekPersonelId(null);
         fetchPersoneller();
     };
 
@@ -96,6 +87,33 @@ function PersonelPage() {
         setDuzenlenenEmail("");
         setDuzenlenenBirimId("");
         setDuzenlenenYonetici(false);
+    };
+
+    const handleUpdate = async (id) => {
+        if (
+            !duzenlenenAd ||
+            !duzenlenenSoyad ||
+            !duzenlenenEmail ||
+            !duzenlenenBirimId
+        ) {
+            alert("Lütfen tüm alanları doldurunuz.");
+            return;
+        }
+
+        const guncelPersonel = {
+            ad: duzenlenenAd,
+            soyad: duzenlenenSoyad,
+            email: duzenlenenEmail,
+            yonetici: duzenlenenYonetici,
+            birim: {
+                birimId: Number(duzenlenenBirimId),
+            },
+        };
+
+        await updatePersonel(id, guncelPersonel);
+
+        handleCancelEdit();
+        fetchPersoneller();
     };
 
     useEffect(() => {
@@ -134,7 +152,10 @@ function PersonelPage() {
                         onChange={(e) => setEmail(e.target.value)}
                     />
 
-                    <select value={birimId} onChange={(e) => setBirimId(e.target.value)}>
+                    <select
+                        value={birimId}
+                        onChange={(e) => setBirimId(e.target.value)}
+                    >
                         <option value="">Birim seçiniz</option>
 
                         {birimler.map((birim) => (
@@ -171,7 +192,10 @@ function PersonelPage() {
             ) : (
                 personeller.map((personel) => (
                     <div
-                        className={`list-card ${duzenlenenPersonelId === personel.personelId ? "list-card-open" : ""}`}
+                        className={`list-card ${duzenlenenPersonelId === personel.personelId
+                                ? "list-card-open"
+                                : ""
+                            }`}
                         key={personel.personelId}
                     >
                         <div className="list-item">
@@ -213,7 +237,9 @@ function PersonelPage() {
 
                                 <button
                                     className="delete-button"
-                                    onClick={() => handleDelete(personel.personelId)}
+                                    onClick={() =>
+                                        setSilinecekPersonelId(personel.personelId)
+                                    }
                                 >
                                     <FaTrash />
                                     Sil
@@ -246,12 +272,17 @@ function PersonelPage() {
 
                                 <select
                                     value={duzenlenenBirimId}
-                                    onChange={(e) => setDuzenlenenBirimId(e.target.value)}
+                                    onChange={(e) =>
+                                        setDuzenlenenBirimId(e.target.value)
+                                    }
                                 >
                                     <option value="">Birim seçiniz</option>
 
                                     {birimler.map((birim) => (
-                                        <option key={birim.birimId} value={birim.birimId}>
+                                        <option
+                                            key={birim.birimId}
+                                            value={birim.birimId}
+                                        >
                                             {birim.ad}
                                         </option>
                                     ))}
@@ -261,12 +292,16 @@ function PersonelPage() {
                                     <input
                                         type="checkbox"
                                         checked={duzenlenenYonetici}
-                                        onChange={(e) => setDuzenlenenYonetici(e.target.checked)}
+                                        onChange={(e) =>
+                                            setDuzenlenenYonetici(e.target.checked)
+                                        }
                                     />
                                     Yönetici mi?
                                 </label>
 
-                                <button onClick={() => handleUpdate(personel.personelId)}>
+                                <button
+                                    onClick={() => handleUpdate(personel.personelId)}
+                                >
                                     <FaCheck />
                                     Güncelle
                                 </button>
@@ -282,6 +317,14 @@ function PersonelPage() {
                         )}
                     </div>
                 ))
+            )}
+
+            {silinecekPersonelId !== null && (
+                <ConfirmPopup
+                    mesaj="Bu personeli silmek istediğinize emin misiniz?"
+                    onConfirm={handleDelete}
+                    onCancel={() => setSilinecekPersonelId(null)}
+                />
             )}
         </div>
     );

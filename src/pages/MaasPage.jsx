@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { getAllPersoneller } from "../api/personelApi";
-import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaList } from "react-icons/fa";
+import { FaPlus, FaTrash, FaList } from "react-icons/fa";
 import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
 
 function MaasPage() {
@@ -11,6 +10,7 @@ function MaasPage() {
     const [donem, setDonem] = useState("2026-06-01");
 
     const [hesaplananMaas, setHesaplananMaas] = useState(null);
+    const [silinecekMaasId, setSilinecekMaasId] = useState(null);
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -45,8 +45,9 @@ function MaasPage() {
         fetchMaaslar();
     };
 
-    const handleDelete = async (id) => {
-        await deleteMaas(id);
+    const handleDelete = async () => {
+        await deleteMaas(silinecekMaasId);
+        setSilinecekMaasId(null);
         fetchMaaslar();
     };
 
@@ -153,7 +154,7 @@ function MaasPage() {
                 </div>
             ) : (
                 maaslar.map((maas) => (
-                    <div className="list-item" key={maas.maasId}>
+                    <div className="list-item maas-list-item" key={maas.maasId}>
                         <div className="maas-info">
                             <div className="maas-personel">
                                 {maas.personel?.ad} {maas.personel?.soyad}
@@ -189,7 +190,7 @@ function MaasPage() {
                         <div className="list-actions">
                             <button
                                 className="delete-button"
-                                onClick={() => handleDelete(maas.maasId)}
+                                onClick={() => setSilinecekMaasId(maas.maasId)}
                             >
                                 <FaTrash />
                                 Sil
@@ -197,6 +198,14 @@ function MaasPage() {
                         </div>
                     </div>
                 ))
+            )}
+
+            {silinecekMaasId !== null && (
+                <ConfirmPopup
+                    mesaj="Bu maaş kaydını silmek istediğinize emin misiniz?"
+                    onConfirm={handleDelete}
+                    onCancel={() => setSilinecekMaasId(null)}
+                />
             )}
         </div>
     );
