@@ -10,6 +10,10 @@ button {
     cursor: pointer;
     transition: 0.2s ease;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 button:hover {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import {
     getAllBirimler,
     saveBirim,
@@ -69,9 +70,6 @@ function BirimPage() {
         <div>
             <div className="page-header">
                 <h2>Birim Yönetimi</h2>
-                <p className="page-subtitle">
-                    Şirket içerisindeki birimleri buradan ekleyebilir, düzenleyebilir ve silebilirsin.
-                </p>
             </div>
 
             <div className="form-section">
@@ -86,7 +84,8 @@ function BirimPage() {
                     />
 
                     <button onClick={handleSave}>
-                        Birim Ekle
+                        <FaPlus />
+                        Ekle
                     </button>
                 </div>
             </div>
@@ -112,13 +111,12 @@ function BirimPage() {
 
                             <div className="list-actions">
                                 <button onClick={() => handleEditClick(birim)}>
+                                    <FaEdit />
                                     Düzenle
                                 </button>
 
-                                <button
-                                    className="delete-button"
-                                    onClick={() => handleDelete(birim.birimId)}
-                                >
+                                <button className="delete-button" onClick={() => handleDelete(birim.birimId)}>
+                                    <FaTrash />
                                     Sil
                                 </button>
                             </div>
@@ -133,6 +131,7 @@ function BirimPage() {
                                 />
 
                                 <button onClick={() => handleUpdate(birim.birimId)}>
+                                    <FaCheck />
                                     Güncelle
                                 </button>
 
@@ -140,6 +139,7 @@ function BirimPage() {
                                     className="secondary-button"
                                     onClick={handleCancelEdit}
                                 >
+                                    <FaTimes />
                                     Vazgeç
                                 </button>
                             </div>

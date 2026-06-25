@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllPersoneller } from "../api/personelApi";
+import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaList } from "react-icons/fa";
 import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
 
 function MaasPage() {
@@ -57,9 +58,6 @@ function MaasPage() {
         <div>
             <div className="page-header">
                 <h2>Maaş Yönetimi</h2>
-                <p className="page-subtitle">
-                    Personellerin dönemlik maaşlarını hesaplayabilir ve kayıtlı maaşları listeleyebilirsin.
-                </p>
             </div>
 
             <div className="form-section">
@@ -89,10 +87,12 @@ function MaasPage() {
                     />
 
                     <button onClick={handleMaasHesapla}>
+                        <FaPlus />
                         Maaş Hesapla
                     </button>
 
                     <button onClick={fetchMaaslar}>
+                        <FaList />
                         Dönemlik Maaşları Listele
                     </button>
                 </div>
@@ -191,6 +191,7 @@ function MaasPage() {
                                 className="delete-button"
                                 onClick={() => handleDelete(maas.maasId)}
                             >
+                                <FaTrash />
                                 Sil
                             </button>
                         </div>

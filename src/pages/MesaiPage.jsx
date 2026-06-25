@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import { getAllPersoneller, getPersonelDonemOzeti } from "../api/personelApi";
 import {
     saveMesai,
@@ -124,9 +125,6 @@ function MesaiPage() {
         <div>
             <div className="page-header">
                 <h2>Mesai Yönetimi</h2>
-                <p className="page-subtitle">
-                    Personellerin dönemlik mesai kayıtlarını listeleyebilir, yeni kayıt ekleyebilir ve mevcut kayıtları güncelleyebilirsin.
-                </p>
             </div>
 
             <div className="form-section">
@@ -152,7 +150,10 @@ function MesaiPage() {
                         onChange={(e) => setDonem(e.target.value)}
                     />
 
-                    <button onClick={fetchMesailer}>Mesaileri Listele</button>
+                    <button onClick={fetchMesailer}>
+                        <FaPlus />
+                        Mesaileri Listele
+                    </button>
                 </div>
             </div>
 
@@ -229,7 +230,10 @@ function MesaiPage() {
                         onChange={(e) => setCikisSaati(e.target.value)}
                     />
 
-                    <button onClick={handleSave}>Mesai Ekle</button>
+                    <button onClick={handleSave}>
+                        <FaPlus />
+                        Mesai Ekle
+                    </button>
                 </div>
             </div>
 
@@ -275,6 +279,7 @@ function MesaiPage() {
 
                             <div className="list-actions">
                                 <button onClick={() => handleEditClick(mesai)}>
+                                    <FaEdit />
                                     Düzenle
                                 </button>
 
@@ -282,6 +287,7 @@ function MesaiPage() {
                                     className="delete-button"
                                     onClick={() => handleDelete(mesai.mesaiId)}
                                 >
+                                    <FaTrash />
                                     Sil
                                 </button>
                             </div>
@@ -308,6 +314,7 @@ function MesaiPage() {
                                 />
 
                                 <button onClick={() => handleUpdate(mesai.mesaiId)}>
+                                    <FaCheck />
                                     Güncelle
                                 </button>
 
@@ -315,6 +322,7 @@ function MesaiPage() {
                                     className="secondary-button"
                                     onClick={handleCancelEdit}
                                 >
+                                    <FaTimes />
                                     Vazgeç
                                 </button>
                             </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaSignInAlt } from "react-icons/fa";
 import { login } from "../api/kullaniciApi";
 
 function LoginPage({ onLogin }) {
@@ -54,6 +55,7 @@ function LoginPage({ onLogin }) {
                     {hata && <div className="login-error">{hata}</div>}
 
                     <button type="submit">
+                        <FaSignInAlt />
                         Giriş Yap
                     </button>
                 </form>

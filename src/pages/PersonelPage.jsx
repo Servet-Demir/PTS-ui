@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllBirimler } from "../api/birimApi";
+import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import { getAllPersoneller, savePersonel, deletePersonel, updatePersonel } from "../api/personelApi";
 
 function PersonelPage() {
@@ -106,9 +107,6 @@ function PersonelPage() {
         <div>
             <div className="page-header">
                 <h2>Personel Yönetimi</h2>
-                <p className="page-subtitle">
-                    Personelleri ekleyebilir, birim bilgilerini düzenleyebilir ve görev durumlarını yönetebilirsin.
-                </p>
             </div>
 
             <div className="form-section">
@@ -155,7 +153,10 @@ function PersonelPage() {
                         Yönetici mi?
                     </label>
 
-                    <button onClick={handleSave}>Personel Ekle</button>
+                    <button onClick={handleSave}>
+                        <FaPlus />
+                        Personel Ekle
+                    </button>
                 </div>
             </div>
 
@@ -206,6 +207,7 @@ function PersonelPage() {
 
                             <div className="list-actions">
                                 <button onClick={() => handleEditClick(personel)}>
+                                    <FaEdit />
                                     Düzenle
                                 </button>
 
@@ -213,6 +215,7 @@ function PersonelPage() {
                                     className="delete-button"
                                     onClick={() => handleDelete(personel.personelId)}
                                 >
+                                    <FaTrash />
                                     Sil
                                 </button>
                             </div>
@@ -264,6 +267,7 @@ function PersonelPage() {
                                 </label>
 
                                 <button onClick={() => handleUpdate(personel.personelId)}>
+                                    <FaCheck />
                                     Güncelle
                                 </button>
 
@@ -271,6 +275,7 @@ function PersonelPage() {
                                     className="secondary-button"
                                     onClick={handleCancelEdit}
                                 >
+                                    <FaTimes />
                                     Vazgeç
                                 </button>
                             </div>
