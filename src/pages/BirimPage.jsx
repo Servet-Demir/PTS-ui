@@ -28,6 +28,11 @@ function BirimPage() {
     };
 
     const handleSave = async () => {
+        if (!ad.trim()) {
+            setUyariMesaji("Lütfen birim adı giriniz.");
+            return;
+        }
+
         const yeniBirim = {
             ad: ad,
         };
@@ -49,6 +54,11 @@ function BirimPage() {
     };
 
     const handleUpdate = async (id) => {
+        if (!duzenlenenAd.trim()) {
+            setUyariMesaji("Lütfen güncellenecek birim adını giriniz.");
+            return;
+        }
+
         const guncelBirim = {
             ad: duzenlenenAd,
         };

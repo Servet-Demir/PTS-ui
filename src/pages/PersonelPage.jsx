@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
+import InfoPopup from "../components/InfoPopup";
 import { getAllBirimler } from "../api/birimApi";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import {
@@ -18,7 +19,7 @@ function PersonelPage() {
     const [email, setEmail] = useState("");
     const [yonetici, setYonetici] = useState(false);
     const [birimId, setBirimId] = useState("");
-
+    const [uyariMesaji, setUyariMesaji] = useState("");
     const [silinecekPersonelId, setSilinecekPersonelId] = useState(null);
 
     const [duzenlenenPersonelId, setDuzenlenenPersonelId] = useState(null);
@@ -44,6 +45,11 @@ function PersonelPage() {
     };
 
     const handleSave = async () => {
+        if (!ad || !soyad || !email || !birimId) {
+            setUyariMesaji("Lütfen personel eklemek için tüm alanları doldurunuz.");
+            return;
+        }
+
         const yeniPersonel = {
             ad: ad,
             soyad: soyad,
@@ -66,9 +72,19 @@ function PersonelPage() {
     };
 
     const handleDelete = async () => {
-        await deletePersonel(silinecekPersonelId);
-        setSilinecekPersonelId(null);
-        fetchPersoneller();
+        try {
+            await deletePersonel(silinecekPersonelId);
+
+            setSilinecekPersonelId(null);
+            fetchPersoneller();
+        } catch (error) {
+            console.log(error);
+
+            setSilinecekPersonelId(null);
+            setUyariMesaji(
+                "Bu personel başka kayıtlarla ilişkili olduğu için silinemeyebilir. Önce bu personele ait mesai veya maaş kayıtlarını kontrol ediniz."
+            );
+        }
     };
 
     const handleEditClick = (personel) => {
@@ -90,13 +106,8 @@ function PersonelPage() {
     };
 
     const handleUpdate = async (id) => {
-        if (
-            !duzenlenenAd ||
-            !duzenlenenSoyad ||
-            !duzenlenenEmail ||
-            !duzenlenenBirimId
-        ) {
-            alert("Lütfen tüm alanları doldurunuz.");
+        if (!duzenlenenAd || !duzenlenenSoyad || !duzenlenenEmail || !duzenlenenBirimId) {
+            setUyariMesaji("Lütfen güncelleme için tüm alanları doldurunuz.");
             return;
         }
 
@@ -193,8 +204,8 @@ function PersonelPage() {
                 personeller.map((personel) => (
                     <div
                         className={`list-card ${duzenlenenPersonelId === personel.personelId
-                                ? "list-card-open"
-                                : ""
+                            ? "list-card-open"
+                            : ""
                             }`}
                         key={personel.personelId}
                     >
@@ -318,12 +329,17 @@ function PersonelPage() {
                     </div>
                 ))
             )}
-
             {silinecekPersonelId !== null && (
                 <ConfirmPopup
                     mesaj="Bu personeli silmek istediğinize emin misiniz?"
                     onConfirm={handleDelete}
                     onCancel={() => setSilinecekPersonelId(null)}
+                />
+            )}
+            {uyariMesaji && (
+                <InfoPopup
+                    mesaj={uyariMesaji}
+                    onClose={() => setUyariMesaji("")}
                 />
             )}
         </div>

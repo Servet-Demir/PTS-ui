@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
+import InfoPopup from "../components/InfoPopup";
 import {
     FaPlus,
     FaEdit,
@@ -23,7 +24,7 @@ function MesaiPage() {
     const [tarih, setTarih] = useState("");
     const [girisSaati, setGirisSaati] = useState("");
     const [cikisSaati, setCikisSaati] = useState("");
-
+    const [uyariMesaji, setUyariMesaji] = useState("");
     const [duzenlenenMesaiId, setDuzenlenenMesaiId] = useState(null);
     const [duzenlenenTarih, setDuzenlenenTarih] = useState("");
     const [duzenlenenGirisSaati, setDuzenlenenGirisSaati] = useState("");
@@ -38,7 +39,7 @@ function MesaiPage() {
 
     const fetchMesailer = async () => {
         if (!personelId || !donem) {
-            alert("Lütfen personel ve dönem seçiniz.");
+            setUyariMesaji("Lütfen personel ve dönem seçiniz.");
             return;
         }
 
@@ -56,13 +57,13 @@ function MesaiPage() {
             console.log(error);
             console.log(error.response);
 
-            alert("Personel dönem özeti getirilirken hata oluştu.");
+            setUyariMesaji("Personel dönem özeti getirilirken hata oluştu.");
         }
     };
 
     const handleSave = async () => {
         if (!personelId || !tarih || !girisSaati || !cikisSaati) {
-            alert("Lütfen tüm alanları doldurunuz.");
+            setUyariMesaji("Lütfen mesai eklemek için tüm alanları doldurunuz.");
             return;
         }
 
@@ -100,7 +101,7 @@ function MesaiPage() {
 
     const handleUpdate = async (id) => {
         if (!duzenlenenTarih || !duzenlenenGirisSaati || !duzenlenenCikisSaati) {
-            alert("Lütfen tüm alanları doldurunuz.");
+            setUyariMesaji("Lütfen güncelleme için tüm alanları doldurunuz.");
             return;
         }
 
@@ -117,9 +118,17 @@ function MesaiPage() {
     };
 
     const handleDelete = async () => {
-        await deleteMesai(silinecekMesaiId);
-        setSilinecekMesaiId(null);
-        fetchMesailer();
+        try {
+            await deleteMesai(silinecekMesaiId);
+
+            setSilinecekMesaiId(null);
+            fetchMesailer();
+        } catch (error) {
+            console.log(error);
+
+            setSilinecekMesaiId(null);
+            setUyariMesaji("Mesai kaydı silinirken bir hata oluştu.");
+        }
     };
 
     useEffect(() => {
@@ -255,8 +264,8 @@ function MesaiPage() {
                 mesailer.map((mesai) => (
                     <div
                         className={`list-card ${duzenlenenMesaiId === mesai.mesaiId
-                                ? "list-card-open"
-                                : ""
+                            ? "list-card-open"
+                            : ""
                             }`}
                         key={mesai.mesaiId}
                     >
@@ -347,12 +356,17 @@ function MesaiPage() {
                     </div>
                 ))
             )}
-
             {silinecekMesaiId !== null && (
                 <ConfirmPopup
                     mesaj="Bu mesai kaydını silmek istediğinize emin misiniz?"
                     onConfirm={handleDelete}
                     onCancel={() => setSilinecekMesaiId(null)}
+                />
+            )}
+            {uyariMesaji && (
+                <InfoPopup
+                    mesaj={uyariMesaji}
+                    onClose={() => setUyariMesaji("")}
                 />
             )}
         </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
+import InfoPopup from "../components/InfoPopup";
 import { getAllPersoneller } from "../api/personelApi";
 import { FaPlus, FaTrash, FaList } from "react-icons/fa";
 import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
@@ -7,7 +8,7 @@ import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
 function MaasPage() {
     const [personeller, setPersoneller] = useState([]);
     const [maaslar, setMaaslar] = useState([]);
-
+    const [uyariMesaji, setUyariMesaji] = useState("");
     const [personelId, setPersonelId] = useState("");
     const [donem, setDonem] = useState("2026-06-01");
 
@@ -21,36 +22,61 @@ function MaasPage() {
 
     const fetchMaaslar = async () => {
         if (!donem) {
-            alert("Lütfen dönem seçiniz.");
+            setUyariMesaji("Lütfen dönem seçiniz.");
             return;
         }
 
-        const response = await getMaasByDonem(donem);
+        try {
+            const response = await getMaasByDonem(donem);
 
-        const siraliMaaslar = [...response.data].sort(
-            (a, b) => a.maasId - b.maasId
-        );
+            const siraliMaaslar = [...response.data].sort(
+                (a, b) => a.maasId - b.maasId
+            );
 
-        setMaaslar(siraliMaaslar);
+            setMaaslar(siraliMaaslar);
+        } catch (error) {
+            console.log(error);
+
+            setUyariMesaji("Maaş listesi getirilirken hata oluştu.");
+        }
     };
 
     const handleMaasHesapla = async () => {
         if (!personelId || !donem) {
-            alert("Lütfen personel ve dönem seçiniz.");
+            setUyariMesaji("Lütfen personel ve dönem seçiniz.");
             return;
         }
 
-        const response = await hesaplaMaas(personelId, donem);
+        try {
+            const response = await hesaplaMaas(personelId, donem);
 
-        setHesaplananMaas(response.data);
+            setHesaplananMaas(response.data);
 
-        fetchMaaslar();
+            await fetchMaaslar();
+        } catch (error) {
+            console.log(error);
+
+            setHesaplananMaas(null);
+
+            setUyariMesaji(
+                error.response?.data ||
+                "Bu işlem gerçekleştirilemez. Lütfen bilgileri kontrol ediniz."
+            );
+        }
     };
 
     const handleDelete = async () => {
-        await deleteMaas(silinecekMaasId);
-        setSilinecekMaasId(null);
-        fetchMaaslar();
+        try {
+            await deleteMaas(silinecekMaasId);
+
+            setSilinecekMaasId(null);
+            fetchMaaslar();
+        } catch (error) {
+            console.log(error);
+
+            setSilinecekMaasId(null);
+            setUyariMesaji("Maaş kaydı silinirken bir hata oluştu.");
+        }
     };
 
     useEffect(() => {
@@ -201,12 +227,17 @@ function MaasPage() {
                     </div>
                 ))
             )}
-
             {silinecekMaasId !== null && (
                 <ConfirmPopup
                     mesaj="Bu maaş kaydını silmek istediğinize emin misiniz?"
                     onConfirm={handleDelete}
                     onCancel={() => setSilinecekMaasId(null)}
+                />
+            )}
+            {uyariMesaji && (
+                <InfoPopup
+                    mesaj={uyariMesaji}
+                    onClose={() => setUyariMesaji("")}
                 />
             )}
         </div>
