@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAllPersoneller } from "../api/personelApi";
+import { getAllPersoneller, getPersonelDonemOzeti } from "../api/personelApi";
 import {
-    getMesaiByPersonelAndDonem,
     saveMesai,
     updateMesai,
     deleteMesai,
@@ -14,9 +13,12 @@ function MesaiPage() {
     const [personelId, setPersonelId] = useState("");
     const [donem, setDonem] = useState("2026-06-01");
 
+    const [personelDonemOzeti, setPersonelDonemOzeti] = useState(null);
+
     const [tarih, setTarih] = useState("");
     const [girisSaati, setGirisSaati] = useState("");
     const [cikisSaati, setCikisSaati] = useState("");
+
     const [duzenlenenMesaiId, setDuzenlenenMesaiId] = useState(null);
     const [duzenlenenTarih, setDuzenlenenTarih] = useState("");
     const [duzenlenenGirisSaati, setDuzenlenenGirisSaati] = useState("");
@@ -33,13 +35,22 @@ function MesaiPage() {
             return;
         }
 
-        const response = await getMesaiByPersonelAndDonem(personelId, donem);
+        try {
+            const response = await getPersonelDonemOzeti(personelId, donem);
 
-        const siraliMesailer = [...response.data].sort(
-            (a, b) => a.mesaiId - b.mesaiId
-        );
+            setPersonelDonemOzeti(response.data);
 
-        setMesailer(siraliMesailer);
+            const siraliMesailer = [...response.data.mesaiKayitlari].sort(
+                (a, b) => a.mesaiId - b.mesaiId
+            );
+
+            setMesailer(siraliMesailer);
+        } catch (error) {
+            console.log(error);
+            console.log(error.response);
+
+            alert("Personel dönem özeti getirilirken hata oluştu.");
+        }
     };
 
     const handleSave = async () => {
@@ -107,6 +118,8 @@ function MesaiPage() {
         fetchPersoneller();
     }, []);
 
+    const maasHesabi = personelDonemOzeti?.maasHesabi;
+
     return (
         <div>
             <div className="page-header">
@@ -115,11 +128,15 @@ function MesaiPage() {
                     Personellerin dönemlik mesai kayıtlarını listeleyebilir, yeni kayıt ekleyebilir ve mevcut kayıtları güncelleyebilirsin.
                 </p>
             </div>
+
             <div className="form-section">
                 <h3 className="section-title">Personel ve Dönem Seç</h3>
 
                 <div className="form-row">
-                    <select value={personelId} onChange={(e) => setPersonelId(e.target.value)}>
+                    <select
+                        value={personelId}
+                        onChange={(e) => setPersonelId(e.target.value)}
+                    >
                         <option value="">Personel seçiniz</option>
 
                         {personeller.map((personel) => (
@@ -139,7 +156,56 @@ function MesaiPage() {
                 </div>
             </div>
 
-            <hr />
+            {personelDonemOzeti && (
+                <div className="period-summary">
+                    <div className="period-summary-header">
+                        <div>
+                            <h3>Dönem Özeti</h3>
+                            <p>
+                                {personelDonemOzeti.personel?.ad}{" "}
+                                {personelDonemOzeti.personel?.soyad}
+                            </p>
+                        </div>
+
+                        <span className="badge badge-blue">
+                            {donem}
+                        </span>
+                    </div>
+
+                    <div className="period-summary-grid">
+                        <div className="period-summary-card">
+                            <span>Personel</span>
+                            <strong>
+                                {personelDonemOzeti.personel?.ad}{" "}
+                                {personelDonemOzeti.personel?.soyad}
+                            </strong>
+                        </div>
+
+                        <div className="period-summary-card">
+                            <span>Mesai Kaydı</span>
+                            <strong>{mesailer.length}</strong>
+                        </div>
+
+                        <div className="period-summary-card">
+                            <span>Maaş Durumu</span>
+                            <strong>
+                                {maasHesabi && maasHesabi.netMaas !== undefined
+                                    ? "Hesaplandı"
+                                    : "Bulunamadı"}
+                            </strong>
+                        </div>
+
+                        <div className="period-summary-card">
+                            <span>Net Maaş</span>
+                            <strong>
+                                {maasHesabi && maasHesabi.netMaas !== undefined
+                                    ? `${maasHesabi.netMaas} ₺`
+                                    : "-"}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="form-section">
                 <h3 className="section-title">Yeni Mesai Kaydı Ekle</h3>
@@ -167,8 +233,6 @@ function MesaiPage() {
                 </div>
             </div>
 
-            <hr />
-
             <h3>Mesai Listesi</h3>
 
             {mesailer.length === 0 ? (
@@ -178,7 +242,8 @@ function MesaiPage() {
             ) : (
                 mesailer.map((mesai) => (
                     <div
-                        className={`list-card ${duzenlenenMesaiId === mesai.mesaiId ? "list-card-open" : ""}`}
+                        className={`list-card ${duzenlenenMesaiId === mesai.mesaiId ? "list-card-open" : ""
+                            }`}
                         key={mesai.mesaiId}
                     >
                         <div className="list-item">
@@ -260,4 +325,5 @@ function MesaiPage() {
         </div>
     );
 }
+
 export default MesaiPage;

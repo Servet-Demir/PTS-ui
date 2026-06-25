@@ -15,3 +15,7 @@ export const updatePersonel = (id, personel) => {
 export const deletePersonel = (id) => {
     return api.delete(`/rest/api/personel/delete/${id}`);
 };
+
+export const getPersonelDonemOzeti = (personelId, donem) => {
+    return api.get(`/rest/api/personel/${personelId}/mesai?donem=${donem}`);
+};
