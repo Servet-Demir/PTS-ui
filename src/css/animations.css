@@ -1,0 +1,63 @@
+.page-container {
+    animation: pageFadeIn 0.25s ease;
+}
+
+.form-section {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.list-item {
+    animation: itemFadeIn 0.22s ease;
+}
+
+.maas-card,
+.period-summary-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.maas-card:hover,
+.period-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
+}
+
+.empty-state {
+    animation: itemFadeIn 0.25s ease;
+}
+
+.navbar-links a {
+    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.navbar-links a:hover {
+    transform: translateY(-1px);
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes itemFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

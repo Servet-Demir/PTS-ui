@@ -6,8 +6,10 @@
 
 @media (max-width: 768px) {
     .page-container {
+        width: calc(100% - 24px);
         margin: 20px 12px;
         padding: 20px;
+        min-height: auto;
     }
 
     .navbar-title {
