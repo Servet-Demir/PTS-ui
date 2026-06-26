@@ -160,9 +160,10 @@ screenshots
 ├── personel-overview.png
 ├── personel-list.png
 ├── mesai-overview.png
+├── mesai-list.png
 ├── maas-overview.png
-└── not-found-page.png
-```
+├── maas-list.png
+└── notfoundpage.png
 
 ### Giriş Sayfası
 
