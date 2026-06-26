@@ -1,11 +1,27 @@
 import { NavLink } from "react-router-dom";
-import { FaBuilding, FaUsers, FaClock, FaMoneyBillWave, FaSignOutAlt } from "react-icons/fa";
+import {
+    FaBuilding,
+    FaUsers,
+    FaClock,
+    FaMoneyBillWave,
+    FaSignOutAlt,
+    FaUserCircle,
+    FaLayerGroup,
+} from "react-icons/fa";
 
 function Navbar({ kullanici, onLogout }) {
     return (
         <header className="navbar">
             <div className="navbar-brand">
-                <h1 className="navbar-title">Personel Takip Sistemi</h1>
+                <div className="navbar-logo">
+                    <FaLayerGroup />
+                </div>
+
+                <div>
+                    <h1 className="navbar-title">
+                        Personel Takip Sistemi
+                    </h1>
+                </div>
             </div>
 
             <div className="navbar-right">
@@ -32,6 +48,10 @@ function Navbar({ kullanici, onLogout }) {
                 </nav>
 
                 <div className="navbar-user">
+                    <div className="user-avatar">
+                        <FaUserCircle />
+                    </div>
+
                     <span>
                         {kullanici.ad} {kullanici.soyad}
                     </span>
