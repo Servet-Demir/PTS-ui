@@ -219,13 +219,9 @@ function PersonelPage() {
             <div className="premium-panel">
                 <div className="premium-panel-header">
                     <h3>Personel Ekle</h3>
-
-                    <div className="premium-panel-icon">
-                        <FaPlus />
-                    </div>
                 </div>
 
-                <div className="form-row premium-form-row">
+                <div className="personel-add-form">
                     <input
                         type="text"
                         placeholder="Ad"
@@ -260,16 +256,16 @@ function PersonelPage() {
                         ))}
                     </select>
 
-                    <label className="checkbox-label">
+                    <label className="personel-checkbox">
                         <input
                             type="checkbox"
                             checked={yonetici}
                             onChange={(e) => setYonetici(e.target.checked)}
                         />
-                        Yönetici mi?
+                        <span>Yönetici mi?</span>
                     </label>
 
-                    <button onClick={handleSave}>
+                    <button className="personel-add-button" onClick={handleSave}>
                         <FaPlus />
                         Personel Ekle
                     </button>
@@ -407,7 +403,7 @@ function PersonelPage() {
                                             ))}
                                         </select>
 
-                                        <label className="checkbox-label">
+                                        <label className="personel-checkbox edit-checkbox">
                                             <input
                                                 type="checkbox"
                                                 checked={duzenlenenYonetici}
@@ -417,7 +413,7 @@ function PersonelPage() {
                                                     )
                                                 }
                                             />
-                                            Yönetici mi?
+                                            <span>Yönetici mi?</span>
                                         </label>
 
                                         <button
