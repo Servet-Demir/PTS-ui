@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
+import SuccessToast from "../components/SuccessToast";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import {
     getAllBirimler,
@@ -12,10 +13,20 @@ import {
 function BirimPage() {
     const [birimler, setBirimler] = useState([]);
     const [ad, setAd] = useState("");
+
     const [silinecekBirimId, setSilinecekBirimId] = useState(null);
     const [uyariMesaji, setUyariMesaji] = useState("");
+    const [basariMesaji, setBasariMesaji] = useState(null);
+
     const [duzenlenenBirimId, setDuzenlenenBirimId] = useState(null);
     const [duzenlenenAd, setDuzenlenenAd] = useState("");
+
+    const showSuccess = (mesaj) => {
+        setBasariMesaji({
+            id: Date.now() + Math.random(),
+            mesaj: mesaj,
+        });
+    };
 
     const fetchBirimler = async () => {
         const response = await getAllBirimler();
@@ -33,14 +44,21 @@ function BirimPage() {
             return;
         }
 
-        const yeniBirim = {
-            ad: ad,
-        };
+        try {
+            const yeniBirim = {
+                ad: ad,
+            };
 
-        await saveBirim(yeniBirim);
+            await saveBirim(yeniBirim);
 
-        setAd("");
-        fetchBirimler();
+            setAd("");
+            await fetchBirimler();
+
+            showSuccess("Birim başarıyla eklendi.");
+        } catch (error) {
+            console.log(error);
+            setUyariMesaji("Birim eklenirken bir hata oluştu.");
+        }
     };
 
     const handleEditClick = (birim) => {
@@ -59,15 +77,23 @@ function BirimPage() {
             return;
         }
 
-        const guncelBirim = {
-            ad: duzenlenenAd,
-        };
+        try {
+            const guncelBirim = {
+                ad: duzenlenenAd,
+            };
 
-        await updateBirim(id, guncelBirim);
+            await updateBirim(id, guncelBirim);
 
-        setDuzenlenenBirimId(null);
-        setDuzenlenenAd("");
-        fetchBirimler();
+            setDuzenlenenBirimId(null);
+            setDuzenlenenAd("");
+
+            await fetchBirimler();
+
+            showSuccess("Birim başarıyla güncellendi.");
+        } catch (error) {
+            console.log(error);
+            setUyariMesaji("Birim güncellenirken bir hata oluştu.");
+        }
     };
 
     const handleDelete = async () => {
@@ -75,7 +101,9 @@ function BirimPage() {
             await deleteBirim(silinecekBirimId);
 
             setSilinecekBirimId(null);
-            fetchBirimler();
+            await fetchBirimler();
+
+            showSuccess("Birim başarıyla silindi.");
         } catch (error) {
             console.log(error);
 
@@ -123,7 +151,10 @@ function BirimPage() {
             ) : (
                 birimler.map((birim) => (
                     <div
-                        className={`list-card ${duzenlenenBirimId === birim.birimId ? "list-card-open" : ""}`}
+                        className={`list-card ${duzenlenenBirimId === birim.birimId
+                                ? "list-card-open"
+                                : ""
+                            }`}
                         key={birim.birimId}
                     >
                         <div className="list-item">
@@ -174,6 +205,7 @@ function BirimPage() {
                     </div>
                 ))
             )}
+
             {silinecekBirimId !== null && (
                 <ConfirmPopup
                     mesaj="Bu birimi silmek istediğinize emin misiniz?"
@@ -181,10 +213,19 @@ function BirimPage() {
                     onCancel={() => setSilinecekBirimId(null)}
                 />
             )}
+
             {uyariMesaji && (
                 <InfoPopup
                     mesaj={uyariMesaji}
                     onClose={() => setUyariMesaji("")}
+                />
+            )}
+
+            {basariMesaji && (
+                <SuccessToast
+                    key={basariMesaji.id}
+                    mesaj={basariMesaji.mesaj}
+                    onClose={() => setBasariMesaji(null)}
                 />
             )}
         </div>

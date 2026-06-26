@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
+import SuccessToast from "../components/SuccessToast";
 import { getAllBirimler } from "../api/birimApi";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import {
@@ -19,7 +20,9 @@ function PersonelPage() {
     const [email, setEmail] = useState("");
     const [yonetici, setYonetici] = useState(false);
     const [birimId, setBirimId] = useState("");
+
     const [uyariMesaji, setUyariMesaji] = useState("");
+    const [basariMesaji, setBasariMesaji] = useState(null);
     const [silinecekPersonelId, setSilinecekPersonelId] = useState(null);
 
     const [duzenlenenPersonelId, setDuzenlenenPersonelId] = useState(null);
@@ -28,6 +31,13 @@ function PersonelPage() {
     const [duzenlenenEmail, setDuzenlenenEmail] = useState("");
     const [duzenlenenBirimId, setDuzenlenenBirimId] = useState("");
     const [duzenlenenYonetici, setDuzenlenenYonetici] = useState(false);
+
+    const showSuccess = (mesaj) => {
+        setBasariMesaji({
+            id: Date.now() + Math.random(),
+            mesaj: mesaj,
+        });
+    };
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -50,25 +60,32 @@ function PersonelPage() {
             return;
         }
 
-        const yeniPersonel = {
-            ad: ad,
-            soyad: soyad,
-            email: email,
-            yonetici: yonetici,
-            birim: {
-                birimId: Number(birimId),
-            },
-        };
+        try {
+            const yeniPersonel = {
+                ad: ad,
+                soyad: soyad,
+                email: email,
+                yonetici: yonetici,
+                birim: {
+                    birimId: Number(birimId),
+                },
+            };
 
-        await savePersonel(yeniPersonel);
+            await savePersonel(yeniPersonel);
 
-        setAd("");
-        setSoyad("");
-        setEmail("");
-        setYonetici(false);
-        setBirimId("");
+            setAd("");
+            setSoyad("");
+            setEmail("");
+            setYonetici(false);
+            setBirimId("");
 
-        fetchPersoneller();
+            await fetchPersoneller();
+
+            showSuccess("Personel başarıyla eklendi.");
+        } catch (error) {
+            console.log(error);
+            setUyariMesaji("Personel eklenirken bir hata oluştu.");
+        }
     };
 
     const handleDelete = async () => {
@@ -76,7 +93,9 @@ function PersonelPage() {
             await deletePersonel(silinecekPersonelId);
 
             setSilinecekPersonelId(null);
-            fetchPersoneller();
+            await fetchPersoneller();
+
+            showSuccess("Personel başarıyla silindi.");
         } catch (error) {
             console.log(error);
 
@@ -111,20 +130,27 @@ function PersonelPage() {
             return;
         }
 
-        const guncelPersonel = {
-            ad: duzenlenenAd,
-            soyad: duzenlenenSoyad,
-            email: duzenlenenEmail,
-            yonetici: duzenlenenYonetici,
-            birim: {
-                birimId: Number(duzenlenenBirimId),
-            },
-        };
+        try {
+            const guncelPersonel = {
+                ad: duzenlenenAd,
+                soyad: duzenlenenSoyad,
+                email: duzenlenenEmail,
+                yonetici: duzenlenenYonetici,
+                birim: {
+                    birimId: Number(duzenlenenBirimId),
+                },
+            };
 
-        await updatePersonel(id, guncelPersonel);
+            await updatePersonel(id, guncelPersonel);
 
-        handleCancelEdit();
-        fetchPersoneller();
+            handleCancelEdit();
+            await fetchPersoneller();
+
+            showSuccess("Personel başarıyla güncellendi.");
+        } catch (error) {
+            console.log(error);
+            setUyariMesaji("Personel güncellenirken bir hata oluştu.");
+        }
     };
 
     useEffect(() => {
@@ -204,8 +230,8 @@ function PersonelPage() {
                 personeller.map((personel) => (
                     <div
                         className={`list-card ${duzenlenenPersonelId === personel.personelId
-                            ? "list-card-open"
-                            : ""
+                                ? "list-card-open"
+                                : ""
                             }`}
                         key={personel.personelId}
                     >
@@ -329,6 +355,7 @@ function PersonelPage() {
                     </div>
                 ))
             )}
+
             {silinecekPersonelId !== null && (
                 <ConfirmPopup
                     mesaj="Bu personeli silmek istediğinize emin misiniz?"
@@ -336,10 +363,19 @@ function PersonelPage() {
                     onCancel={() => setSilinecekPersonelId(null)}
                 />
             )}
+
             {uyariMesaji && (
                 <InfoPopup
                     mesaj={uyariMesaji}
                     onClose={() => setUyariMesaji("")}
+                />
+            )}
+
+            {basariMesaji && (
+                <SuccessToast
+                    key={basariMesaji.id}
+                    mesaj={basariMesaji.mesaj}
+                    onClose={() => setBasariMesaji(null)}
                 />
             )}
         </div>

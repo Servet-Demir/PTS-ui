@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
+import SuccessToast from "../components/SuccessToast";
 import {
     FaPlus,
     FaEdit,
@@ -24,13 +25,23 @@ function MesaiPage() {
     const [tarih, setTarih] = useState("");
     const [girisSaati, setGirisSaati] = useState("");
     const [cikisSaati, setCikisSaati] = useState("");
+
     const [uyariMesaji, setUyariMesaji] = useState("");
+    const [basariMesaji, setBasariMesaji] = useState(null);
+
     const [duzenlenenMesaiId, setDuzenlenenMesaiId] = useState(null);
     const [duzenlenenTarih, setDuzenlenenTarih] = useState("");
     const [duzenlenenGirisSaati, setDuzenlenenGirisSaati] = useState("");
     const [duzenlenenCikisSaati, setDuzenlenenCikisSaati] = useState("");
 
     const [silinecekMesaiId, setSilinecekMesaiId] = useState(null);
+
+    const showSuccess = (mesaj) => {
+        setBasariMesaji({
+            id: Date.now() + Math.random(),
+            mesaj: mesaj,
+        });
+    };
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -67,22 +78,29 @@ function MesaiPage() {
             return;
         }
 
-        const yeniMesai = {
-            personel: {
-                personelId: Number(personelId),
-            },
-            tarih: tarih,
-            girisSaati: girisSaati,
-            cikisSaati: cikisSaati,
-        };
+        try {
+            const yeniMesai = {
+                personel: {
+                    personelId: Number(personelId),
+                },
+                tarih: tarih,
+                girisSaati: girisSaati,
+                cikisSaati: cikisSaati,
+            };
 
-        await saveMesai(yeniMesai);
+            await saveMesai(yeniMesai);
 
-        setTarih("");
-        setGirisSaati("");
-        setCikisSaati("");
+            setTarih("");
+            setGirisSaati("");
+            setCikisSaati("");
 
-        fetchMesailer();
+            await fetchMesailer();
+
+            showSuccess("Mesai kaydı başarıyla eklendi.");
+        } catch (error) {
+            console.log(error);
+            setUyariMesaji("Mesai kaydı eklenirken bir hata oluştu.");
+        }
     };
 
     const handleEditClick = (mesai) => {
@@ -105,16 +123,23 @@ function MesaiPage() {
             return;
         }
 
-        const guncelMesai = {
-            tarih: duzenlenenTarih,
-            girisSaati: duzenlenenGirisSaati,
-            cikisSaati: duzenlenenCikisSaati,
-        };
+        try {
+            const guncelMesai = {
+                tarih: duzenlenenTarih,
+                girisSaati: duzenlenenGirisSaati,
+                cikisSaati: duzenlenenCikisSaati,
+            };
 
-        await updateMesai(id, guncelMesai);
+            await updateMesai(id, guncelMesai);
 
-        handleCancelEdit();
-        fetchMesailer();
+            handleCancelEdit();
+            await fetchMesailer();
+
+            showSuccess("Mesai kaydı başarıyla güncellendi.");
+        } catch (error) {
+            console.log(error);
+            setUyariMesaji("Mesai kaydı güncellenirken bir hata oluştu.");
+        }
     };
 
     const handleDelete = async () => {
@@ -122,7 +147,9 @@ function MesaiPage() {
             await deleteMesai(silinecekMesaiId);
 
             setSilinecekMesaiId(null);
-            fetchMesailer();
+            await fetchMesailer();
+
+            showSuccess("Mesai kaydı başarıyla silindi.");
         } catch (error) {
             console.log(error);
 
@@ -264,8 +291,8 @@ function MesaiPage() {
                 mesailer.map((mesai) => (
                     <div
                         className={`list-card ${duzenlenenMesaiId === mesai.mesaiId
-                            ? "list-card-open"
-                            : ""
+                                ? "list-card-open"
+                                : ""
                             }`}
                         key={mesai.mesaiId}
                     >
@@ -356,6 +383,7 @@ function MesaiPage() {
                     </div>
                 ))
             )}
+
             {silinecekMesaiId !== null && (
                 <ConfirmPopup
                     mesaj="Bu mesai kaydını silmek istediğinize emin misiniz?"
@@ -363,10 +391,19 @@ function MesaiPage() {
                     onCancel={() => setSilinecekMesaiId(null)}
                 />
             )}
+
             {uyariMesaji && (
                 <InfoPopup
                     mesaj={uyariMesaji}
                     onClose={() => setUyariMesaji("")}
+                />
+            )}
+
+            {basariMesaji && (
+                <SuccessToast
+                    key={basariMesaji.id}
+                    mesaj={basariMesaji.mesaj}
+                    onClose={() => setBasariMesaji(null)}
                 />
             )}
         </div>

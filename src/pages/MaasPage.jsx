@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
+import SuccessToast from "../components/SuccessToast";
 import { getAllPersoneller } from "../api/personelApi";
 import { FaPlus, FaTrash, FaList } from "react-icons/fa";
 import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
@@ -8,12 +9,22 @@ import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
 function MaasPage() {
     const [personeller, setPersoneller] = useState([]);
     const [maaslar, setMaaslar] = useState([]);
+
     const [uyariMesaji, setUyariMesaji] = useState("");
+    const [basariMesaji, setBasariMesaji] = useState(null);
+
     const [personelId, setPersonelId] = useState("");
     const [donem, setDonem] = useState("2026-06-01");
 
     const [hesaplananMaas, setHesaplananMaas] = useState(null);
     const [silinecekMaasId, setSilinecekMaasId] = useState(null);
+
+    const showSuccess = (mesaj) => {
+        setBasariMesaji({
+            id: Date.now() + Math.random(),
+            mesaj: mesaj,
+        });
+    };
 
     const fetchPersoneller = async () => {
         const response = await getAllPersoneller();
@@ -53,6 +64,8 @@ function MaasPage() {
             setHesaplananMaas(response.data);
 
             await fetchMaaslar();
+
+            showSuccess("Maaş işlemi başarıyla tamamlandı.");
         } catch (error) {
             console.log(error);
 
@@ -70,7 +83,9 @@ function MaasPage() {
             await deleteMaas(silinecekMaasId);
 
             setSilinecekMaasId(null);
-            fetchMaaslar();
+            await fetchMaaslar();
+
+            showSuccess("Maaş kaydı başarıyla silindi.");
         } catch (error) {
             console.log(error);
 
@@ -227,6 +242,7 @@ function MaasPage() {
                     </div>
                 ))
             )}
+
             {silinecekMaasId !== null && (
                 <ConfirmPopup
                     mesaj="Bu maaş kaydını silmek istediğinize emin misiniz?"
@@ -234,10 +250,19 @@ function MaasPage() {
                     onCancel={() => setSilinecekMaasId(null)}
                 />
             )}
+
             {uyariMesaji && (
                 <InfoPopup
                     mesaj={uyariMesaji}
                     onClose={() => setUyariMesaji("")}
+                />
+            )}
+
+            {basariMesaji && (
+                <SuccessToast
+                    key={basariMesaji.id}
+                    mesaj={basariMesaji.mesaj}
+                    onClose={() => setBasariMesaji(null)}
                 />
             )}
         </div>
