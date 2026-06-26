@@ -15,3 +15,7 @@ export const getMaasByDonem = (donem) => {
 export const deleteMaas = (id) => {
     return api.delete(`/rest/api/maas/delete/${id}`);
 };
+
+export const getMaasDonemOzeti = (donem) => {
+    return api.get(`/rest/api/maas/donem-ozeti?donem=${donem}`);
+};
