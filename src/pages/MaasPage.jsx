@@ -1,33 +1,35 @@
-import { useEffect, useState } from "react";
-import ConfirmPopup from "../components/ConfirmPopup";
+import { useState } from "react";
 import InfoPopup from "../components/InfoPopup";
 import SuccessToast from "../components/SuccessToast";
-import { getAllPersoneller } from "../api/personelApi";
 import {
-    FaPlus,
-    FaTrash,
     FaList,
     FaMoneyBillWave,
     FaCalculator,
     FaCoins,
+    FaCalendarAlt,
+    FaUserCheck,
 } from "react-icons/fa";
-import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
+import { getMaasDonemOzeti } from "../api/maasApi";
 
 function MaasPage() {
-    const [personeller, setPersoneller] = useState([]);
-    const [maaslar, setMaaslar] = useState([]);
+    const [donem, setDonem] = useState("2026-06-01");
+    const [maasOzetleri, setMaasOzetleri] = useState([]);
 
     const [uyariMesaji, setUyariMesaji] = useState("");
     const [basariMesaji, setBasariMesaji] = useState(null);
 
-    const [personelId, setPersonelId] = useState("");
-    const [donem, setDonem] = useState("2026-06-01");
-
-    const [hesaplananMaas, setHesaplananMaas] = useState(null);
-    const [silinecekMaasId, setSilinecekMaasId] = useState(null);
-
-    const toplamNetMaas = maaslar.reduce(
+    const toplamNetMaas = maasOzetleri.reduce(
         (toplam, maas) => toplam + Number(maas.netMaas || 0),
+        0
+    );
+
+    const toplamCeza = maasOzetleri.reduce(
+        (toplam, maas) => toplam + Number(maas.ceza || 0),
+        0
+    );
+
+    const toplamGecersizGun = maasOzetleri.reduce(
+        (toplam, maas) => toplam + Number(maas.gecersizGun || 0),
         0
     );
 
@@ -38,77 +40,33 @@ function MaasPage() {
         });
     };
 
-    const fetchPersoneller = async () => {
-        const response = await getAllPersoneller();
-        setPersoneller(response.data);
-    };
-
-    const fetchMaaslar = async () => {
+    const fetchDonemMaasOzeti = async () => {
         if (!donem) {
             setUyariMesaji("Lütfen dönem seçiniz.");
             return;
         }
 
         try {
-            const response = await getMaasByDonem(donem);
+            const response = await getMaasDonemOzeti(donem);
 
-            const siraliMaaslar = [...response.data].sort(
-                (a, b) => a.maasId - b.maasId
-            );
+            setMaasOzetleri(response.data);
 
-            setMaaslar(siraliMaaslar);
+            if (response.data.length === 0) {
+                setUyariMesaji(
+                    "Seçili dönemde mesai kaydı bulunan personel olmadığı için maaş özeti oluşturulamadı."
+                );
+                return;
+            }
+
+            showSuccess("Dönem maaş özeti başarıyla getirildi.");
         } catch (error) {
             console.log(error);
 
-            setUyariMesaji("Maaş listesi getirilirken hata oluştu.");
+            setMaasOzetleri([]);
+
+            setUyariMesaji("Dönem maaş özeti getirilirken bir hata oluştu.");
         }
     };
-
-    const handleMaasHesapla = async () => {
-        if (!personelId || !donem) {
-            setUyariMesaji("Lütfen personel ve dönem seçiniz.");
-            return;
-        }
-
-        try {
-            const response = await hesaplaMaas(personelId, donem);
-
-            setHesaplananMaas(response.data);
-
-            await fetchMaaslar();
-
-            showSuccess("Maaş işlemi başarıyla tamamlandı.");
-        } catch (error) {
-            console.log(error);
-
-            setHesaplananMaas(null);
-
-            setUyariMesaji(
-                error.response?.data ||
-                "Bu işlem gerçekleştirilemez. Lütfen bilgileri kontrol ediniz."
-            );
-        }
-    };
-
-    const handleDelete = async () => {
-        try {
-            await deleteMaas(silinecekMaasId);
-
-            setSilinecekMaasId(null);
-            await fetchMaaslar();
-
-            showSuccess("Maaş kaydı başarıyla silindi.");
-        } catch (error) {
-            console.log(error);
-
-            setSilinecekMaasId(null);
-            setUyariMesaji("Maaş kaydı silinirken bir hata oluştu.");
-        }
-    };
-
-    useEffect(() => {
-        fetchPersoneller();
-    }, []);
 
     return (
         <div className="premium-page">
@@ -125,12 +83,12 @@ function MaasPage() {
             <div className="premium-stat-grid">
                 <div className="premium-stat-card">
                     <div className="premium-stat-icon">
-                        <FaList />
+                        <FaUserCheck />
                     </div>
 
                     <div>
-                        <span>Maaş Kaydı</span>
-                        <strong>{maaslar.length}</strong>
+                        <span>Dönemdeki Personel</span>
+                        <strong>{maasOzetleri.length}</strong>
                     </div>
                 </div>
 
@@ -140,7 +98,7 @@ function MaasPage() {
                     </div>
 
                     <div>
-                        <span>Toplam Net</span>
+                        <span>Toplam Net Maaş</span>
                         <strong>{toplamNetMaas.toLocaleString("tr-TR")} ₺</strong>
                     </div>
                 </div>
@@ -151,110 +109,34 @@ function MaasPage() {
                     </div>
 
                     <div>
-                        <span>Son İşlem</span>
-                        <strong>{hesaplananMaas ? "Hazır" : "Yok"}</strong>
+                        <span>Toplam Ceza</span>
+                        <strong>{toplamCeza.toLocaleString("tr-TR")} ₺</strong>
                     </div>
                 </div>
             </div>
 
             <div className="premium-panel">
                 <div className="premium-panel-header">
-                    <h3>Maaş Hesapla</h3>
+                    <h3>Dönem Maaş Özeti</h3>
 
                     <div className="premium-panel-icon">
-                        <FaCalculator />
+                        <FaCalendarAlt />
                     </div>
                 </div>
 
                 <div className="form-row premium-form-row">
-                    <select
-                        value={personelId}
-                        onChange={(e) => setPersonelId(e.target.value)}
-                    >
-                        <option value="">Personel seçiniz</option>
-
-                        {personeller.map((personel) => (
-                            <option
-                                key={personel.personelId}
-                                value={personel.personelId}
-                            >
-                                {personel.ad} {personel.soyad}
-                            </option>
-                        ))}
-                    </select>
-
                     <input
                         type="date"
                         value={donem}
                         onChange={(e) => setDonem(e.target.value)}
                     />
 
-                    <button onClick={handleMaasHesapla}>
-                        <FaPlus />
-                        Maaş Hesapla
-                    </button>
-
-                    <button onClick={fetchMaaslar}>
+                    <button onClick={fetchDonemMaasOzeti}>
                         <FaList />
-                        Dönemlik Maaşları Listele
+                        Dönem Maaş Özetini Göster
                     </button>
                 </div>
             </div>
-
-            {hesaplananMaas && (
-                <div className="premium-panel">
-                    <div className="premium-section-header">
-                        <div className="premium-title-row">
-                            <div className="premium-title-icon">
-                                <FaMoneyBillWave />
-                            </div>
-
-                            <h3>Son Hesaplanan Maaş</h3>
-                        </div>
-
-                        <div className="premium-count">
-                            {hesaplananMaas.donem}
-                        </div>
-                    </div>
-
-                    <div className="maas-summary-grid">
-                        <div className="maas-card">
-                            <p className="maas-card-title">Personel</p>
-                            <p className="maas-card-value maas-card-small">
-                                {hesaplananMaas.personel?.ad}{" "}
-                                {hesaplananMaas.personel?.soyad}
-                            </p>
-                        </div>
-
-                        <div className="maas-card">
-                            <p className="maas-card-title">Brüt Maaş</p>
-                            <p className="maas-card-value">
-                                {hesaplananMaas.brutMaas} ₺
-                            </p>
-                        </div>
-
-                        <div className="maas-card">
-                            <p className="maas-card-title">Ceza</p>
-                            <p className="maas-card-value">
-                                {hesaplananMaas.ceza} ₺
-                            </p>
-                        </div>
-
-                        <div className="maas-card">
-                            <p className="maas-card-title">Net Maaş</p>
-                            <p className="maas-card-value">
-                                {hesaplananMaas.netMaas} ₺
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="maas-meta-row">
-                        <span className="badge badge-red">
-                            Geçersiz Gün: {hesaplananMaas.gecersizGun}
-                        </span>
-                    </div>
-                </div>
-            )}
 
             <div className="premium-panel">
                 <div className="premium-section-header">
@@ -263,24 +145,24 @@ function MaasPage() {
                             <FaMoneyBillWave />
                         </div>
 
-                        <h3>Dönemlik Maaş Listesi</h3>
+                        <h3>Maaş Özeti Listesi</h3>
                     </div>
 
                     <div className="premium-count">
-                        {maaslar.length} kayıt
+                        {maasOzetleri.length} kayıt
                     </div>
                 </div>
 
-                {maaslar.length === 0 ? (
+                {maasOzetleri.length === 0 ? (
                     <div className="empty-state premium-empty-state">
-                        Bu döneme ait maaş kaydı bulunmuyor.
+                        Maaş özeti görüntülemek için dönem seçiniz.
                     </div>
                 ) : (
                     <div className="premium-list">
-                        {maaslar.map((maas) => (
+                        {maasOzetleri.map((maas) => (
                             <div
                                 className="list-item maas-list-item premium-list-item"
-                                key={maas.maasId}
+                                key={maas.personelId}
                             >
                                 <div className="premium-list-left">
                                     <div className="premium-mini-icon">
@@ -289,7 +171,7 @@ function MaasPage() {
 
                                     <div className="maas-info">
                                         <div className="maas-personel">
-                                            {maas.personel?.ad} {maas.personel?.soyad}
+                                            {maas.ad} {maas.soyad}
                                         </div>
 
                                         <div className="maas-detail">
@@ -297,6 +179,18 @@ function MaasPage() {
                                         </div>
 
                                         <div className="maas-meta">
+                                            <span
+                                                className={
+                                                    maas.yonetici
+                                                        ? "badge badge-blue"
+                                                        : "badge badge-gray"
+                                                }
+                                            >
+                                                {maas.yonetici
+                                                    ? "Yönetici"
+                                                    : "Personel"}
+                                            </span>
+
                                             <span className="badge badge-green">
                                                 Net: {maas.netMaas} ₺
                                             </span>
@@ -310,36 +204,36 @@ function MaasPage() {
                                             </span>
 
                                             <span className="maas-detail">
+                                                Mesai Kaydı: {maas.toplamMesaiKaydi}
+                                            </span>
+
+                                            <span className="maas-detail">
                                                 Geçersiz Gün: {maas.gecersizGun}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="list-actions">
-                                    <button
-                                        className="delete-button"
-                                        onClick={() =>
-                                            setSilinecekMaasId(maas.maasId)
-                                        }
-                                    >
-                                        <FaTrash />
-                                        Sil
-                                    </button>
-                                </div>
                             </div>
                         ))}
                     </div>
                 )}
-            </div>
 
-            {silinecekMaasId !== null && (
-                <ConfirmPopup
-                    mesaj="Bu maaş kaydını silmek istediğinize emin misiniz?"
-                    onConfirm={handleDelete}
-                    onCancel={() => setSilinecekMaasId(null)}
-                />
-            )}
+                {maasOzetleri.length > 0 && (
+                    <div className="maas-meta-row">
+                        <span className="badge badge-blue">
+                            Toplam Personel: {maasOzetleri.length}
+                        </span>
+
+                        <span className="badge badge-red">
+                            Toplam Geçersiz Gün: {toplamGecersizGun}
+                        </span>
+
+                        <span className="badge badge-green">
+                            Toplam Net: {toplamNetMaas.toLocaleString("tr-TR")} ₺
+                        </span>
+                    </div>
+                )}
+            </div>
 
             {uyariMesaji && (
                 <InfoPopup
