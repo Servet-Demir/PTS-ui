@@ -146,7 +146,7 @@ Maaş özeti kartlarında şu bilgiler gösterilir:
 * Ceza
 * Net maaş
 
-Bu sayede seçilen döneme ait maaş durumu tek ekranda özetlenebilir.
+Bu yapı sayesinde seçilen döneme ait maaş durumu tek ekranda özetlenebilir.
 
 ## Ekran Görüntüleri
 
@@ -164,6 +164,7 @@ screenshots
 ├── maas-overview.png
 ├── maas-list.png
 └── notfoundpage.png
+```
 
 ### Giriş Sayfası
 
@@ -185,13 +186,17 @@ screenshots
 
 ![Mesai Overview](screenshots/mesai-overview.png)
 
+![Mesai List](screenshots/mesai-list.png)
+
 ### Maaş Yönetimi
 
 ![Maaş Overview](screenshots/maas-overview.png)
 
+![Maaş List](screenshots/maas-list.png)
+
 ### 404 Sayfası
 
-![Not Found Page](screenshots/not-found-page.png)
+![Not Found Page](screenshots/notfoundpage.png)
 
 ## Geliştirilebilecek Özellikler
 
