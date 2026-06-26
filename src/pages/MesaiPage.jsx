@@ -9,6 +9,9 @@ import {
     FaCheck,
     FaTimes,
     FaList,
+    FaClock,
+    FaCalendarCheck,
+    FaCalendarTimes,
 } from "react-icons/fa";
 import { getAllPersoneller, getPersonelDonemOzeti } from "../api/personelApi";
 import { saveMesai, updateMesai, deleteMesai } from "../api/mesaiApi";
@@ -35,6 +38,11 @@ function MesaiPage() {
     const [duzenlenenCikisSaati, setDuzenlenenCikisSaati] = useState("");
 
     const [silinecekMesaiId, setSilinecekMesaiId] = useState(null);
+
+    const gecerliMesaiSayisi = mesailer.filter((mesai) => mesai.mesaiGecerli).length;
+    const gecersizMesaiSayisi = mesailer.filter(
+        (mesai) => mesai.mesaiGecerli === false
+    ).length;
 
     const showSuccess = (mesaj) => {
         setBasariMesaji({
@@ -165,15 +173,62 @@ function MesaiPage() {
     const maasHesabi = personelDonemOzeti?.maasHesabi;
 
     return (
-        <div>
-            <div className="page-header">
-                <h2>Mesai Yönetimi</h2>
+        <div className="premium-page">
+            <div className="premium-hero">
+                <div className="premium-hero-content">
+                    <h2>Mesai Yönetimi</h2>
+                </div>
+
+                <div className="premium-hero-icon">
+                    <FaClock />
+                </div>
             </div>
 
-            <div className="form-section">
-                <h3 className="section-title">Personel ve Dönem Seç</h3>
+            <div className="premium-stat-grid">
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaClock />
+                    </div>
 
-                <div className="form-row">
+                    <div>
+                        <span>Toplam Mesai</span>
+                        <strong>{mesailer.length}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaCalendarCheck />
+                    </div>
+
+                    <div>
+                        <span>Geçerli Mesai</span>
+                        <strong>{gecerliMesaiSayisi}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaCalendarTimes />
+                    </div>
+
+                    <div>
+                        <span>Geçersiz Mesai</span>
+                        <strong>{gecersizMesaiSayisi}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div className="premium-panel">
+                <div className="premium-panel-header">
+                    <h3>Personel ve Dönem Seç</h3>
+
+                    <div className="premium-panel-icon">
+                        <FaList />
+                    </div>
+                </div>
+
+                <div className="form-row premium-form-row">
                     <select
                         value={personelId}
                         onChange={(e) => setPersonelId(e.target.value)}
@@ -204,17 +259,17 @@ function MesaiPage() {
             </div>
 
             {personelDonemOzeti && (
-                <div className="period-summary">
-                    <div className="period-summary-header">
-                        <div>
+                <div className="premium-panel">
+                    <div className="premium-section-header">
+                        <div className="premium-title-row">
+                            <div className="premium-title-icon">
+                                <FaClock />
+                            </div>
+
                             <h3>Dönem Özeti</h3>
-                            <p>
-                                {personelDonemOzeti.personel?.ad}{" "}
-                                {personelDonemOzeti.personel?.soyad}
-                            </p>
                         </div>
 
-                        <span className="badge badge-blue">{donem}</span>
+                        <div className="premium-count">{donem}</div>
                     </div>
 
                     <div className="period-summary-grid">
@@ -252,10 +307,16 @@ function MesaiPage() {
                 </div>
             )}
 
-            <div className="form-section">
-                <h3 className="section-title">Yeni Mesai Kaydı Ekle</h3>
+            <div className="premium-panel">
+                <div className="premium-panel-header">
+                    <h3>Mesai Kaydı Ekle</h3>
 
-                <div className="form-row">
+                    <div className="premium-panel-icon">
+                        <FaPlus />
+                    </div>
+                </div>
+
+                <div className="form-row premium-form-row">
                     <input
                         type="date"
                         value={tarih}
@@ -281,108 +342,138 @@ function MesaiPage() {
                 </div>
             </div>
 
-            <h3>Mesai Listesi</h3>
-
-            {mesailer.length === 0 ? (
-                <div className="empty-state">
-                    Mesai kaydı bulunamadı.
-                </div>
-            ) : (
-                mesailer.map((mesai) => (
-                    <div
-                        className={`list-card ${duzenlenenMesaiId === mesai.mesaiId
-                                ? "list-card-open"
-                                : ""
-                            }`}
-                        key={mesai.mesaiId}
-                    >
-                        <div className="list-item">
-                            <div className="mesai-info">
-                                <div className="mesai-date">{mesai.tarih}</div>
-
-                                <div className="mesai-detail">
-                                    Giriş: {mesai.girisSaati} - Çıkış:{" "}
-                                    {mesai.cikisSaati}
-                                </div>
-
-                                <div className="mesai-meta">
-                                    <span
-                                        className={
-                                            mesai.mesaiGecerli
-                                                ? "badge badge-green"
-                                                : "badge badge-red"
-                                        }
-                                    >
-                                        {mesai.mesaiGecerli
-                                            ? "Geçerli"
-                                            : "Geçersiz"}
-                                    </span>
-
-                                    <span className="mesai-detail">
-                                        ID: {mesai.mesaiId}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="list-actions">
-                                <button onClick={() => handleEditClick(mesai)}>
-                                    <FaEdit />
-                                    Düzenle
-                                </button>
-
-                                <button
-                                    className="delete-button"
-                                    onClick={() => setSilinecekMesaiId(mesai.mesaiId)}
-                                >
-                                    <FaTrash />
-                                    Sil
-                                </button>
-                            </div>
+            <div className="premium-panel">
+                <div className="premium-section-header">
+                    <div className="premium-title-row">
+                        <div className="premium-title-icon">
+                            <FaClock />
                         </div>
 
-                        {duzenlenenMesaiId === mesai.mesaiId && (
-                            <div className="edit-panel mesai-edit-panel">
-                                <input
-                                    type="date"
-                                    value={duzenlenenTarih}
-                                    onChange={(e) =>
-                                        setDuzenlenenTarih(e.target.value)
-                                    }
-                                />
-
-                                <input
-                                    type="time"
-                                    value={duzenlenenGirisSaati}
-                                    onChange={(e) =>
-                                        setDuzenlenenGirisSaati(e.target.value)
-                                    }
-                                />
-
-                                <input
-                                    type="time"
-                                    value={duzenlenenCikisSaati}
-                                    onChange={(e) =>
-                                        setDuzenlenenCikisSaati(e.target.value)
-                                    }
-                                />
-
-                                <button onClick={() => handleUpdate(mesai.mesaiId)}>
-                                    <FaCheck />
-                                    Güncelle
-                                </button>
-
-                                <button
-                                    className="secondary-button"
-                                    onClick={handleCancelEdit}
-                                >
-                                    <FaTimes />
-                                    Vazgeç
-                                </button>
-                            </div>
-                        )}
+                        <h3>Mesai Listesi</h3>
                     </div>
-                ))
-            )}
+
+                    <div className="premium-count">
+                        {mesailer.length} kayıt
+                    </div>
+                </div>
+
+                {mesailer.length === 0 ? (
+                    <div className="empty-state premium-empty-state">
+                        Mesai kaydı bulunamadı.
+                    </div>
+                ) : (
+                    <div className="premium-list">
+                        {mesailer.map((mesai) => (
+                            <div
+                                className={`list-card premium-list-card ${duzenlenenMesaiId === mesai.mesaiId
+                                        ? "list-card-open"
+                                        : ""
+                                    }`}
+                                key={mesai.mesaiId}
+                            >
+                                <div className="list-item premium-list-item">
+                                    <div className="premium-list-left">
+                                        <div className="premium-mini-icon">
+                                            <FaClock />
+                                        </div>
+
+                                        <div className="mesai-info">
+                                            <div className="mesai-date">
+                                                {mesai.tarih}
+                                            </div>
+
+                                            <div className="mesai-detail">
+                                                Giriş: {mesai.girisSaati} - Çıkış:{" "}
+                                                {mesai.cikisSaati}
+                                            </div>
+
+                                            <div className="mesai-meta">
+                                                <span
+                                                    className={
+                                                        mesai.mesaiGecerli
+                                                            ? "badge badge-green"
+                                                            : "badge badge-red"
+                                                    }
+                                                >
+                                                    {mesai.mesaiGecerli
+                                                        ? "Geçerli"
+                                                        : "Geçersiz"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="list-actions">
+                                        <button onClick={() => handleEditClick(mesai)}>
+                                            <FaEdit />
+                                            Düzenle
+                                        </button>
+
+                                        <button
+                                            className="delete-button"
+                                            onClick={() =>
+                                                setSilinecekMesaiId(mesai.mesaiId)
+                                            }
+                                        >
+                                            <FaTrash />
+                                            Sil
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {duzenlenenMesaiId === mesai.mesaiId && (
+                                    <div className="edit-panel mesai-edit-panel premium-edit-panel">
+                                        <input
+                                            type="date"
+                                            value={duzenlenenTarih}
+                                            onChange={(e) =>
+                                                setDuzenlenenTarih(e.target.value)
+                                            }
+                                        />
+
+                                        <input
+                                            type="time"
+                                            value={duzenlenenGirisSaati}
+                                            onChange={(e) =>
+                                                setDuzenlenenGirisSaati(
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <input
+                                            type="time"
+                                            value={duzenlenenCikisSaati}
+                                            onChange={(e) =>
+                                                setDuzenlenenCikisSaati(
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <button
+                                            onClick={() =>
+                                                handleUpdate(mesai.mesaiId)
+                                            }
+                                        >
+                                            <FaCheck />
+                                            Güncelle
+                                        </button>
+
+                                        <button
+                                            className="secondary-button"
+                                            onClick={handleCancelEdit}
+                                        >
+                                            <FaTimes />
+                                            Vazgeç
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {silinecekMesaiId !== null && (
                 <ConfirmPopup

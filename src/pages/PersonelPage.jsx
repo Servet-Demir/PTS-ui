@@ -3,7 +3,16 @@ import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
 import SuccessToast from "../components/SuccessToast";
 import { getAllBirimler } from "../api/birimApi";
-import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
+import {
+    FaPlus,
+    FaEdit,
+    FaTrash,
+    FaCheck,
+    FaTimes,
+    FaUsers,
+    FaUserTie,
+    FaBuilding,
+} from "react-icons/fa";
 import {
     getAllPersoneller,
     savePersonel,
@@ -31,6 +40,8 @@ function PersonelPage() {
     const [duzenlenenEmail, setDuzenlenenEmail] = useState("");
     const [duzenlenenBirimId, setDuzenlenenBirimId] = useState("");
     const [duzenlenenYonetici, setDuzenlenenYonetici] = useState(false);
+
+    const yoneticiSayisi = personeller.filter((personel) => personel.yonetici).length;
 
     const showSuccess = (mesaj) => {
         setBasariMesaji({
@@ -159,15 +170,62 @@ function PersonelPage() {
     }, []);
 
     return (
-        <div>
-            <div className="page-header">
-                <h2>Personel Yönetimi</h2>
+        <div className="premium-page">
+            <div className="premium-hero">
+                <div className="premium-hero-content">
+                    <h2>Personel Yönetimi</h2>
+                </div>
+
+                <div className="premium-hero-icon">
+                    <FaUsers />
+                </div>
             </div>
 
-            <div className="form-section">
-                <h3 className="section-title">Yeni Personel Ekle</h3>
+            <div className="premium-stat-grid">
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaUsers />
+                    </div>
 
-                <div className="form-row">
+                    <div>
+                        <span>Toplam Personel</span>
+                        <strong>{personeller.length}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaUserTie />
+                    </div>
+
+                    <div>
+                        <span>Yönetici</span>
+                        <strong>{yoneticiSayisi}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaBuilding />
+                    </div>
+
+                    <div>
+                        <span>Birim Sayısı</span>
+                        <strong>{birimler.length}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div className="premium-panel">
+                <div className="premium-panel-header">
+                    <h3>Personel Ekle</h3>
+
+                    <div className="premium-panel-icon">
+                        <FaPlus />
+                    </div>
+                </div>
+
+                <div className="form-row premium-form-row">
                     <input
                         type="text"
                         placeholder="Ad"
@@ -218,143 +276,173 @@ function PersonelPage() {
                 </div>
             </div>
 
-            <hr />
-
-            <h3>Personel Listesi</h3>
-
-            {personeller.length === 0 ? (
-                <div className="empty-state">
-                    Henüz personel kaydı bulunmuyor.
-                </div>
-            ) : (
-                personeller.map((personel) => (
-                    <div
-                        className={`list-card ${duzenlenenPersonelId === personel.personelId
-                                ? "list-card-open"
-                                : ""
-                            }`}
-                        key={personel.personelId}
-                    >
-                        <div className="list-item">
-                            <div className="personel-info">
-                                <div className="personel-name">
-                                    {personel.ad} {personel.soyad}
-                                </div>
-
-                                <div className="personel-detail">
-                                    {personel.email}
-                                </div>
-
-                                <div className="personel-meta">
-                                    <span className="badge badge-green">
-                                        {personel.birim?.ad}
-                                    </span>
-
-                                    <span
-                                        className={
-                                            personel.yonetici
-                                                ? "badge badge-blue"
-                                                : "badge badge-gray"
-                                        }
-                                    >
-                                        {personel.yonetici ? "Yönetici" : "Personel"}
-                                    </span>
-
-                                    <span className="personel-detail">
-                                        ID: {personel.personelId}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="list-actions">
-                                <button onClick={() => handleEditClick(personel)}>
-                                    <FaEdit />
-                                    Düzenle
-                                </button>
-
-                                <button
-                                    className="delete-button"
-                                    onClick={() =>
-                                        setSilinecekPersonelId(personel.personelId)
-                                    }
-                                >
-                                    <FaTrash />
-                                    Sil
-                                </button>
-                            </div>
+            <div className="premium-panel">
+                <div className="premium-section-header">
+                    <div className="premium-title-row">
+                        <div className="premium-title-icon">
+                            <FaUsers />
                         </div>
 
-                        {duzenlenenPersonelId === personel.personelId && (
-                            <div className="edit-panel personel-edit-panel">
-                                <input
-                                    type="text"
-                                    placeholder="Ad"
-                                    value={duzenlenenAd}
-                                    onChange={(e) => setDuzenlenenAd(e.target.value)}
-                                />
-
-                                <input
-                                    type="text"
-                                    placeholder="Soyad"
-                                    value={duzenlenenSoyad}
-                                    onChange={(e) => setDuzenlenenSoyad(e.target.value)}
-                                />
-
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={duzenlenenEmail}
-                                    onChange={(e) => setDuzenlenenEmail(e.target.value)}
-                                />
-
-                                <select
-                                    value={duzenlenenBirimId}
-                                    onChange={(e) =>
-                                        setDuzenlenenBirimId(e.target.value)
-                                    }
-                                >
-                                    <option value="">Birim seçiniz</option>
-
-                                    {birimler.map((birim) => (
-                                        <option
-                                            key={birim.birimId}
-                                            value={birim.birimId}
-                                        >
-                                            {birim.ad}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <label className="checkbox-label">
-                                    <input
-                                        type="checkbox"
-                                        checked={duzenlenenYonetici}
-                                        onChange={(e) =>
-                                            setDuzenlenenYonetici(e.target.checked)
-                                        }
-                                    />
-                                    Yönetici mi?
-                                </label>
-
-                                <button
-                                    onClick={() => handleUpdate(personel.personelId)}
-                                >
-                                    <FaCheck />
-                                    Güncelle
-                                </button>
-
-                                <button
-                                    className="secondary-button"
-                                    onClick={handleCancelEdit}
-                                >
-                                    <FaTimes />
-                                    Vazgeç
-                                </button>
-                            </div>
-                        )}
+                        <h3>Personel Listesi</h3>
                     </div>
-                ))
-            )}
+
+                    <div className="premium-count">
+                        {personeller.length} kayıt
+                    </div>
+                </div>
+
+                {personeller.length === 0 ? (
+                    <div className="empty-state premium-empty-state">
+                        Henüz personel kaydı bulunmuyor.
+                    </div>
+                ) : (
+                    <div className="premium-list">
+                        {personeller.map((personel) => (
+                            <div
+                                className={`list-card premium-list-card ${duzenlenenPersonelId === personel.personelId
+                                        ? "list-card-open"
+                                        : ""
+                                    }`}
+                                key={personel.personelId}
+                            >
+                                <div className="list-item premium-list-item">
+                                    <div className="premium-list-left">
+                                        <div className="premium-mini-icon">
+                                            <FaUsers />
+                                        </div>
+
+                                        <div className="personel-info">
+                                            <div className="personel-name">
+                                                {personel.ad} {personel.soyad}
+                                            </div>
+
+                                            <div className="personel-detail">
+                                                {personel.email}
+                                            </div>
+
+                                            <div className="personel-meta">
+                                                <span className="badge badge-green">
+                                                    {personel.birim?.ad}
+                                                </span>
+
+                                                <span
+                                                    className={
+                                                        personel.yonetici
+                                                            ? "badge badge-blue"
+                                                            : "badge badge-gray"
+                                                    }
+                                                >
+                                                    {personel.yonetici
+                                                        ? "Yönetici"
+                                                        : "Personel"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="list-actions">
+                                        <button onClick={() => handleEditClick(personel)}>
+                                            <FaEdit />
+                                            Düzenle
+                                        </button>
+
+                                        <button
+                                            className="delete-button"
+                                            onClick={() =>
+                                                setSilinecekPersonelId(
+                                                    personel.personelId
+                                                )
+                                            }
+                                        >
+                                            <FaTrash />
+                                            Sil
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {duzenlenenPersonelId === personel.personelId && (
+                                    <div className="edit-panel personel-edit-panel premium-edit-panel">
+                                        <input
+                                            type="text"
+                                            placeholder="Ad"
+                                            value={duzenlenenAd}
+                                            onChange={(e) =>
+                                                setDuzenlenenAd(e.target.value)
+                                            }
+                                        />
+
+                                        <input
+                                            type="text"
+                                            placeholder="Soyad"
+                                            value={duzenlenenSoyad}
+                                            onChange={(e) =>
+                                                setDuzenlenenSoyad(e.target.value)
+                                            }
+                                        />
+
+                                        <input
+                                            type="email"
+                                            placeholder="Email"
+                                            value={duzenlenenEmail}
+                                            onChange={(e) =>
+                                                setDuzenlenenEmail(e.target.value)
+                                            }
+                                        />
+
+                                        <select
+                                            value={duzenlenenBirimId}
+                                            onChange={(e) =>
+                                                setDuzenlenenBirimId(e.target.value)
+                                            }
+                                        >
+                                            <option value="">Birim seçiniz</option>
+
+                                            {birimler.map((birim) => (
+                                                <option
+                                                    key={birim.birimId}
+                                                    value={birim.birimId}
+                                                >
+                                                    {birim.ad}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        <label className="checkbox-label">
+                                            <input
+                                                type="checkbox"
+                                                checked={duzenlenenYonetici}
+                                                onChange={(e) =>
+                                                    setDuzenlenenYonetici(
+                                                        e.target.checked
+                                                    )
+                                                }
+                                            />
+                                            Yönetici mi?
+                                        </label>
+
+                                        <button
+                                            onClick={() =>
+                                                handleUpdate(personel.personelId)
+                                            }
+                                        >
+                                            <FaCheck />
+                                            Güncelle
+                                        </button>
+
+                                        <button
+                                            className="secondary-button"
+                                            onClick={handleCancelEdit}
+                                        >
+                                            <FaTimes />
+                                            Vazgeç
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {silinecekPersonelId !== null && (
                 <ConfirmPopup

@@ -3,7 +3,14 @@ import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
 import SuccessToast from "../components/SuccessToast";
 import { getAllPersoneller } from "../api/personelApi";
-import { FaPlus, FaTrash, FaList } from "react-icons/fa";
+import {
+    FaPlus,
+    FaTrash,
+    FaList,
+    FaMoneyBillWave,
+    FaCalculator,
+    FaCoins,
+} from "react-icons/fa";
 import { hesaplaMaas, getMaasByDonem, deleteMaas } from "../api/maasApi";
 
 function MaasPage() {
@@ -18,6 +25,11 @@ function MaasPage() {
 
     const [hesaplananMaas, setHesaplananMaas] = useState(null);
     const [silinecekMaasId, setSilinecekMaasId] = useState(null);
+
+    const toplamNetMaas = maaslar.reduce(
+        (toplam, maas) => toplam + Number(maas.netMaas || 0),
+        0
+    );
 
     const showSuccess = (mesaj) => {
         setBasariMesaji({
@@ -99,15 +111,62 @@ function MaasPage() {
     }, []);
 
     return (
-        <div>
-            <div className="page-header">
-                <h2>Maaş Yönetimi</h2>
+        <div className="premium-page">
+            <div className="premium-hero">
+                <div className="premium-hero-content">
+                    <h2>Maaş Yönetimi</h2>
+                </div>
+
+                <div className="premium-hero-icon">
+                    <FaMoneyBillWave />
+                </div>
             </div>
 
-            <div className="form-section">
-                <h3 className="section-title">Maaş Hesapla</h3>
+            <div className="premium-stat-grid">
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaList />
+                    </div>
 
-                <div className="form-row">
+                    <div>
+                        <span>Maaş Kaydı</span>
+                        <strong>{maaslar.length}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaCoins />
+                    </div>
+
+                    <div>
+                        <span>Toplam Net</span>
+                        <strong>{toplamNetMaas.toLocaleString("tr-TR")} ₺</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaCalculator />
+                    </div>
+
+                    <div>
+                        <span>Son İşlem</span>
+                        <strong>{hesaplananMaas ? "Hazır" : "Yok"}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div className="premium-panel">
+                <div className="premium-panel-header">
+                    <h3>Maaş Hesapla</h3>
+
+                    <div className="premium-panel-icon">
+                        <FaCalculator />
+                    </div>
+                </div>
+
+                <div className="form-row premium-form-row">
                     <select
                         value={personelId}
                         onChange={(e) => setPersonelId(e.target.value)}
@@ -143,8 +202,20 @@ function MaasPage() {
             </div>
 
             {hesaplananMaas && (
-                <>
-                    <h3>Son Hesaplanan Maaş</h3>
+                <div className="premium-panel">
+                    <div className="premium-section-header">
+                        <div className="premium-title-row">
+                            <div className="premium-title-icon">
+                                <FaMoneyBillWave />
+                            </div>
+
+                            <h3>Son Hesaplanan Maaş</h3>
+                        </div>
+
+                        <div className="premium-count">
+                            {hesaplananMaas.donem}
+                        </div>
+                    </div>
 
                     <div className="maas-summary-grid">
                         <div className="maas-card">
@@ -178,70 +249,89 @@ function MaasPage() {
                     </div>
 
                     <div className="maas-meta-row">
-                        <span className="badge badge-blue">
-                            Dönem: {hesaplananMaas.donem}
-                        </span>
-
                         <span className="badge badge-red">
                             Geçersiz Gün: {hesaplananMaas.gecersizGun}
                         </span>
                     </div>
-                </>
-            )}
-
-            <h3>Dönemlik Maaş Listesi</h3>
-
-            {maaslar.length === 0 ? (
-                <div className="empty-state">
-                    Bu döneme ait maaş kaydı bulunmuyor.
                 </div>
-            ) : (
-                maaslar.map((maas) => (
-                    <div className="list-item maas-list-item" key={maas.maasId}>
-                        <div className="maas-info">
-                            <div className="maas-personel">
-                                {maas.personel?.ad} {maas.personel?.soyad}
-                            </div>
-
-                            <div className="maas-detail">
-                                Dönem: {maas.donem}
-                            </div>
-
-                            <div className="maas-meta">
-                                <span className="badge badge-green">
-                                    Net: {maas.netMaas} ₺
-                                </span>
-
-                                <span className="badge badge-blue">
-                                    Brüt: {maas.brutMaas} ₺
-                                </span>
-
-                                <span className="badge badge-red">
-                                    Ceza: {maas.ceza} ₺
-                                </span>
-
-                                <span className="maas-detail">
-                                    Geçersiz Gün: {maas.gecersizGun}
-                                </span>
-
-                                <span className="maas-detail">
-                                    ID: {maas.maasId}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="list-actions">
-                            <button
-                                className="delete-button"
-                                onClick={() => setSilinecekMaasId(maas.maasId)}
-                            >
-                                <FaTrash />
-                                Sil
-                            </button>
-                        </div>
-                    </div>
-                ))
             )}
+
+            <div className="premium-panel">
+                <div className="premium-section-header">
+                    <div className="premium-title-row">
+                        <div className="premium-title-icon">
+                            <FaMoneyBillWave />
+                        </div>
+
+                        <h3>Dönemlik Maaş Listesi</h3>
+                    </div>
+
+                    <div className="premium-count">
+                        {maaslar.length} kayıt
+                    </div>
+                </div>
+
+                {maaslar.length === 0 ? (
+                    <div className="empty-state premium-empty-state">
+                        Bu döneme ait maaş kaydı bulunmuyor.
+                    </div>
+                ) : (
+                    <div className="premium-list">
+                        {maaslar.map((maas) => (
+                            <div
+                                className="list-item maas-list-item premium-list-item"
+                                key={maas.maasId}
+                            >
+                                <div className="premium-list-left">
+                                    <div className="premium-mini-icon">
+                                        <FaMoneyBillWave />
+                                    </div>
+
+                                    <div className="maas-info">
+                                        <div className="maas-personel">
+                                            {maas.personel?.ad} {maas.personel?.soyad}
+                                        </div>
+
+                                        <div className="maas-detail">
+                                            Dönem: {maas.donem}
+                                        </div>
+
+                                        <div className="maas-meta">
+                                            <span className="badge badge-green">
+                                                Net: {maas.netMaas} ₺
+                                            </span>
+
+                                            <span className="badge badge-blue">
+                                                Brüt: {maas.brutMaas} ₺
+                                            </span>
+
+                                            <span className="badge badge-red">
+                                                Ceza: {maas.ceza} ₺
+                                            </span>
+
+                                            <span className="maas-detail">
+                                                Geçersiz Gün: {maas.gecersizGun}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="list-actions">
+                                    <button
+                                        className="delete-button"
+                                        onClick={() =>
+                                            setSilinecekMaasId(maas.maasId)
+                                        }
+                                    >
+                                        <FaTrash />
+                                        Sil
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {silinecekMaasId !== null && (
                 <ConfirmPopup

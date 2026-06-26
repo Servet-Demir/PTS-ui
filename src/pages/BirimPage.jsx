@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import ConfirmPopup from "../components/ConfirmPopup";
 import InfoPopup from "../components/InfoPopup";
 import SuccessToast from "../components/SuccessToast";
-import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
+import {
+    FaPlus,
+    FaEdit,
+    FaTrash,
+    FaCheck,
+    FaTimes,
+    FaBuilding,
+    FaList,
+} from "react-icons/fa";
 import {
     getAllBirimler,
     saveBirim,
@@ -119,15 +127,66 @@ function BirimPage() {
     }, []);
 
     return (
-        <div>
-            <div className="page-header">
-                <h2>Birim Yönetimi</h2>
+        <div className="premium-page">
+            <div className="premium-hero">
+                <div className="premium-hero-content">
+                    <h2>Birim Yönetimi</h2>
+                </div>
+
+                <div className="premium-hero-icon">
+                    <FaBuilding />
+                </div>
             </div>
 
-            <div className="form-section">
-                <h3 className="section-title">Yeni Birim Ekle</h3>
+            <div className="premium-stat-grid">
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaBuilding />
+                    </div>
 
-                <div className="form-row">
+                    <div>
+                        <span>Toplam Birim</span>
+                        <strong>{birimler.length}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaEdit />
+                    </div>
+
+                    <div>
+                        <span>Düzenleme Durumu</span>
+                        <strong>{duzenlenenBirimId ? "Açık" : "Kapalı"}</strong>
+                    </div>
+                </div>
+
+                <div className="premium-stat-card">
+                    <div className="premium-stat-icon">
+                        <FaList />
+                    </div>
+
+                    <div>
+                        <span>Son Eklenen Birim</span>
+                        <strong>
+                            {birimler.length > 0
+                                ? birimler[birimler.length - 1].ad
+                                : "-"}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <div className="premium-panel">
+                <div className="premium-panel-header">
+                    <h3>Birim Ekle</h3>
+
+                    <div className="premium-panel-icon">
+                        <FaPlus />
+                    </div>
+                </div>
+
+                <div className="form-row premium-form-row">
                     <input
                         type="text"
                         placeholder="Birim adı"
@@ -142,69 +201,97 @@ function BirimPage() {
                 </div>
             </div>
 
-            <h3>Birim Listesi</h3>
-
-            {birimler.length === 0 ? (
-                <div className="empty-state">
-                    Henüz birim kaydı bulunmuyor.
-                </div>
-            ) : (
-                birimler.map((birim) => (
-                    <div
-                        className={`list-card ${duzenlenenBirimId === birim.birimId
-                                ? "list-card-open"
-                                : ""
-                            }`}
-                        key={birim.birimId}
-                    >
-                        <div className="list-item">
-                            <div className="list-content">
-                                <strong>{birim.ad}</strong>
-                                <br />
-                                <span>Birim ID: {birim.birimId}</span>
-                            </div>
-
-                            <div className="list-actions">
-                                <button onClick={() => handleEditClick(birim)}>
-                                    <FaEdit />
-                                    Düzenle
-                                </button>
-
-                                <button
-                                    className="delete-button"
-                                    onClick={() => setSilinecekBirimId(birim.birimId)}
-                                >
-                                    <FaTrash />
-                                    Sil
-                                </button>
-                            </div>
+            <div className="premium-panel">
+                <div className="premium-section-header">
+                    <div className="premium-title-row">
+                        <div className="premium-title-icon">
+                            <FaBuilding />
                         </div>
 
-                        {duzenlenenBirimId === birim.birimId && (
-                            <div className="edit-panel">
-                                <input
-                                    type="text"
-                                    value={duzenlenenAd}
-                                    onChange={(e) => setDuzenlenenAd(e.target.value)}
-                                />
-
-                                <button onClick={() => handleUpdate(birim.birimId)}>
-                                    <FaCheck />
-                                    Güncelle
-                                </button>
-
-                                <button
-                                    className="secondary-button"
-                                    onClick={handleCancelEdit}
-                                >
-                                    <FaTimes />
-                                    Vazgeç
-                                </button>
-                            </div>
-                        )}
+                        <h3>Birim Listesi</h3>
                     </div>
-                ))
-            )}
+
+                    <div className="premium-count">
+                        {birimler.length} kayıt
+                    </div>
+                </div>
+
+                {birimler.length === 0 ? (
+                    <div className="empty-state premium-empty-state">
+                        Henüz birim kaydı bulunmuyor.
+                    </div>
+                ) : (
+                    <div className="premium-list">
+                        {birimler.map((birim) => (
+                            <div
+                                className={`list-card premium-list-card ${duzenlenenBirimId === birim.birimId
+                                    ? "list-card-open"
+                                    : ""
+                                    }`}
+                                key={birim.birimId}
+                            >
+                                <div className="list-item premium-list-item">
+                                    <div className="premium-list-left">
+                                        <div className="premium-mini-icon">
+                                            <FaBuilding />
+                                        </div>
+
+                                        <div className="list-content">
+                                            <strong>{birim.ad}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div className="list-actions">
+                                        <button onClick={() => handleEditClick(birim)}>
+                                            <FaEdit />
+                                            Düzenle
+                                        </button>
+
+                                        <button
+                                            className="delete-button"
+                                            onClick={() =>
+                                                setSilinecekBirimId(birim.birimId)
+                                            }
+                                        >
+                                            <FaTrash />
+                                            Sil
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {duzenlenenBirimId === birim.birimId && (
+                                    <div className="edit-panel premium-edit-panel">
+                                        <input
+                                            type="text"
+                                            value={duzenlenenAd}
+                                            onChange={(e) =>
+                                                setDuzenlenenAd(e.target.value)
+                                            }
+                                        />
+
+                                        <button
+                                            onClick={() =>
+                                                handleUpdate(birim.birimId)
+                                            }
+                                        >
+                                            <FaCheck />
+                                            Güncelle
+                                        </button>
+
+                                        <button
+                                            className="secondary-button"
+                                            onClick={handleCancelEdit}
+                                        >
+                                            <FaTimes />
+                                            Vazgeç
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {silinecekBirimId !== null && (
                 <ConfirmPopup
