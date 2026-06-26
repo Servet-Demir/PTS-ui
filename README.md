@@ -57,7 +57,7 @@ pts-ui
 Repoyu klonlayın:
 
 ```bash
-git clone https://github.com/kullanici-adi/pts-ui.git
+git clone https://github.com/Servet-Demir/pts-ui.git
 ```
 
 Proje klasörüne gidin:
