@@ -288,6 +288,93 @@
     background-color: #f8fafc;
 }
 
+/* PERSONEL EKLE FORMU */
+
+.personel-add-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr 1fr auto auto;
+    gap: 14px;
+    align-items: center;
+}
+
+.personel-add-form input,
+.personel-add-form select {
+    width: 100%;
+    min-width: 0;
+}
+
+.personel-checkbox {
+    height: 48px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 0 15px;
+
+    border-radius: 12px;
+    border: 1px solid #dbe3ef;
+
+    background-color: #ffffff;
+    color: #1f2937;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.personel-checkbox:hover {
+    border-color: #bfdbfe;
+    background-color: #f8fbff;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+}
+
+.personel-checkbox input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.personel-add-button {
+    height: 48px;
+    padding: 0 18px;
+
+    border-radius: 12px;
+
+    white-space: nowrap;
+}
+
+.edit-checkbox {
+    height: 40px;
+    padding: 0 14px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+    .personel-add-form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .personel-checkbox,
+    .personel-add-button {
+        width: 100%;
+    }
+}
+
 @media (max-width: 900px) {
     .premium-page {
         width: calc(100% - 24px);
@@ -317,5 +404,11 @@
     .premium-panel-header {
         align-items: flex-start;
         flex-direction: column;
+    }
+}
+
+@media (max-width: 700px) {
+    .personel-add-form {
+        grid-template-columns: 1fr;
     }
 }
